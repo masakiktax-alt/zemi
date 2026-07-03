@@ -3,17 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>栗原ゼミアルムナイ｜学びの構造</title>
-<meta name="description" content="大学1〜2年・3〜4年・卒業後をつなぐ、栗原ゼミでの学びの構造。">
-<meta property="og:type" content="website">
-<meta property="og:title" content="栗原ゼミアルムナイ｜学びの構造">
-<meta property="og:description" content="大学1〜2年・3〜4年・卒業後をつなぐ、栗原ゼミでの学びの構造。">
+<title>栗原ゼミアルムナイ</title>
+<meta name="description" content="栗原正樹ゼミ ／ 栗原ゼミアルムナイ。学びの構造・ゼミの位置付け・教育プログラム・アルムナイ・ゼミ選考。">
+<meta property="og:title" content="栗原ゼミアルムナイ">
+<meta property="og:description" content="正解のない世界で、自分の決断を信じて進む。栗原正樹ゼミ ／ 栗原ゼミアルムナイ。">
 <meta property="og:locale" content="ja_JP">
 <meta name="twitter:card" content="summary">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;1,9..144,400&amp;family=Zen+Kaku+Gothic+New:wght@400;500;700&amp;family=Zen+Old+Mincho:wght@600;700;900&amp;display=swap" rel="stylesheet">
 <style>
+
   :root{
     --abyss:#0B0E1A;
     --night:#13172A;
@@ -302,16 +302,23 @@
     transition:transform .35s, border-color .35s;
   }
   .stage:hover{transform:translateY(-3px);border-color:rgba(244,163,64,.35)}
-  a.stage{color:inherit;text-decoration:none}
+  a.stage{color:inherit;text-decoration:none;position:relative}
   a.stage:hover{border-color:var(--gold)}
-  .stage .goto{
-    display:none;margin-top:8px;text-align:center;
-    font-family:"Fraunces",serif;font-style:italic;
-    color:var(--gold);font-size:.78rem;letter-spacing:.14em;
-    border-top:1px solid var(--line);padding-top:14px;
+  /* hover popup (data-popup) */
+  a.stage[data-popup]::after{
+    content:attr(data-popup);
+    position:absolute;left:50%;top:-16px;
+    transform:translate(-50%,-4px);
+    background:var(--gold);color:var(--abyss);
+    font-family:"Zen Old Mincho",serif;font-weight:700;
+    font-size:.88rem;letter-spacing:.14em;
+    padding:.55em 1.4em;border-radius:40px;white-space:nowrap;
+    box-shadow:0 12px 28px rgba(232,98,60,.35);
+    opacity:0;pointer-events:none;
+    transition:opacity .3s ease, transform .3s ease;
+    z-index:5;
   }
-  a.stage .goto{display:block}
-  a.stage:hover .goto{color:var(--first-light)}
+  a.stage[data-popup]:hover::after{opacity:1;transform:translate(-50%,0)}
   .stage .dot{
     width:14px;height:14px;border-radius:50%;background:var(--gold);
     box-shadow:0 0 0 6px rgba(244,163,64,.12);align-self:center;margin-top:-8px;
@@ -340,39 +347,170 @@
   }
 
   /* ---------- ROUTES (3ページへの導線カード) ---------- */
-  /* ---------- ROUTES (縦積みの明るいバー型ボタン) ---------- */
-  .routes{display:flex;flex-direction:column;gap:12px;margin-top:60px}
-  .route{
-    display:flex;align-items:center;justify-content:center;gap:.9em;
-    padding:22px 28px;border-radius:12px;
-    background:var(--first-light);color:var(--abyss);
-    text-align:center;position:relative;transition:.3s;
-    font-family:"Zen Old Mincho",serif;font-weight:700;
-    font-size:clamp(1rem,1.9vw,1.15rem);letter-spacing:.06em;
-    border:1px solid transparent;
+  /* ---------- (routes は削除しました) ---------- */
+
+
+  /* ===== COMPASS NAV (羅針盤) ===== */
+  .compass-sec{padding:clamp(70px,10vw,130px) 0;overflow:visible}
+  .compass-stage{position:relative;width:200px;margin:0 auto;display:flex;justify-content:center}
+  .compass{
+    position:relative;width:200px;height:200px;padding:0;border:none;background:none;cursor:pointer;
+    -webkit-tap-highlight-color:transparent;
   }
-  .route:hover{
-    background:var(--gold);transform:translateY(-2px);
-    box-shadow:0 12px 30px rgba(232,98,60,.18);
+  .compass:focus-visible{outline:none}
+  .compass:focus-visible .compass-face{filter:drop-shadow(0 0 12px rgba(244,163,64,.6))}
+
+  /* 神秘のオーラ（同心円）：常時かすかに脈打ち、開くと大きく拡散 */
+  .aura{
+    position:absolute;left:50%;top:50%;width:200px;height:200px;
+    border-radius:50%;transform:translate(-50%,-50%) scale(1);
+    border:1px solid rgba(244,163,64,.35);
+    opacity:0;pointer-events:none;z-index:0;
   }
-  .route::after{
-    content:"→";font-family:"Fraunces",serif;font-style:italic;
-    color:var(--ember);font-size:1.1em;transition:transform .3s;
+  .compass:hover .aura,.compass-stage.open .aura{opacity:1}
+  .aura.a1{animation:auraPulse 3.6s ease-out infinite}
+  .aura.a2{animation:auraPulse 3.6s ease-out infinite 1.2s}
+  .aura.a3{animation:auraPulse 3.6s ease-out infinite 2.4s}
+  @keyframes auraPulse{
+    0%{opacity:.5;transform:translate(-50%,-50%) scale(.75)}
+    100%{opacity:0;transform:translate(-50%,-50%) scale(1.7)}
   }
-  .route:hover::after{transform:translateX(4px);color:var(--abyss)}
-  /* 旧サブ要素は非表示（既存マークアップとの互換用） */
-  .route .num,.route .desc{display:none}
-  .route .lbl{display:inline;font-weight:inherit;font-size:inherit;margin:0;color:inherit;font-family:inherit}
+  /* 開くとオーラが一段強く広がる */
+  .compass-stage.open .aura{border-color:rgba(251,227,196,.45)}
+
+  .compass-face{
+    position:absolute;inset:0;width:100%;height:100%;z-index:2;
+    filter:drop-shadow(0 16px 40px rgba(232,98,60,.3));
+    transition:transform .6s cubic-bezier(.3,.8,.3,1), filter .6s;
+    animation:breathe 5.5s ease-in-out infinite;
+  }
+  @keyframes breathe{
+    0%,100%{filter:drop-shadow(0 16px 40px rgba(232,98,60,.25))}
+    50%{filter:drop-shadow(0 16px 52px rgba(244,163,64,.5))}
+  }
+  /* 内なる光の明滅 */
+  .innerglow{animation:innerFlicker 4.5s ease-in-out infinite;transform-origin:100px 100px}
+  @keyframes innerFlicker{
+    0%,100%{opacity:.55}
+    50%{opacity:1}
+  }
+  /* 外周ルーン環：ゆっくり回転（逆回転の二重環） */
+  .rune-ring{transform-origin:100px 100px;animation:spin 40s linear infinite}
+  .rune-ring.rev{animation:spin 26s linear infinite reverse}
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  .cardinal{font-family:"Fraunces",serif;font-style:italic;font-size:13px;fill:#F4A340;fill-opacity:.8;letter-spacing:.05em}
+  .cardinal.n{fill:#FBE3C4;fill-opacity:1;font-size:15px}
+
+  /* 針：神託を探すように微かに揺らぐ */
+  .needle{transform-origin:100px 100px;transition:transform 1s cubic-bezier(.3,.9,.2,1);animation:seek 7s ease-in-out infinite}
+  @keyframes seek{
+    0%,100%{transform:rotate(-5deg)}
+    25%{transform:rotate(4deg)}
+    50%{transform:rotate(-2deg)}
+    75%{transform:rotate(6deg)}
+  }
+  .needle-core{animation:corePulse 2.6s ease-in-out infinite}
+  @keyframes corePulse{0%,100%{opacity:.5}50%{opacity:1}}
+
+  .compass-hint{
+    position:absolute;left:0;right:0;bottom:-30px;text-align:center;z-index:3;
+    font-family:"Zen Old Mincho",serif;font-weight:700;font-size:.9rem;color:var(--gold);letter-spacing:.2em;
+    transition:opacity .35s;pointer-events:none;
+    animation:hintGlow 3.4s ease-in-out infinite;
+  }
+  @keyframes hintGlow{
+    0%,100%{opacity:.55;text-shadow:0 0 0 transparent}
+    50%{opacity:1;text-shadow:0 0 12px rgba(244,163,64,.6)}
+  }
+
+  /* 方位に伸びるリンク（初期：中心に畳まれ非表示） */
+  .ray{
+    position:absolute;left:50%;top:50%;z-index:1;
+    transform:translate(-50%,-50%) scale(.4);
+    opacity:0;pointer-events:none;
+    transition:transform .7s cubic-bezier(.22,1.1,.3,1), opacity .5s ease;
+  }
+  .ray a{
+    display:block;white-space:nowrap;text-decoration:none;
+    padding:.62em 1.25em;border-radius:40px;
+    background:var(--night);border:1px solid rgba(244,163,64,.45);color:var(--first-light);
+    font-family:"Zen Old Mincho",serif;font-weight:700;font-size:.88rem;letter-spacing:.03em;
+    box-shadow:0 8px 20px rgba(0,0,0,.4);position:relative;
+    transition:background .3s,color .3s,border-color .3s,box-shadow .3s;
+  }
+  .ray a:hover{
+    background:var(--gold);color:var(--abyss);border-color:var(--gold);
+    box-shadow:0 0 22px rgba(244,163,64,.55);
+  }
+
+  /* ---- OPEN 状態 ---- */
+  .compass-stage.open .compass-face{transform:scale(.6);animation:breathe 5.5s ease-in-out infinite}
+  .compass-stage.open .needle{transform:rotate(405deg);animation:none}
+  .compass-stage.open .compass-hint{opacity:0}
+  .compass-stage.open .compass{cursor:default}
+  .compass-stage.open .ray{opacity:1;pointer-events:auto}
+  .compass-stage.open .ray a{animation:rayGlow .9s ease-out backwards}
+  @keyframes rayGlow{
+    0%{box-shadow:0 0 0 0 rgba(244,163,64,.6)}
+    100%{box-shadow:0 8px 20px rgba(0,0,0,.4)}
+  }
+
+  /* 5方位に配置 */
+  .compass-stage.open .ray[style*="--dir:0"]{transform:translate(-50%,-50%) translate(-200px,-96px) scale(1);transition-delay:.12s}
+  .compass-stage.open .ray[style*="--dir:0"] a{animation-delay:.12s}
+  .compass-stage.open .ray[style*="--dir:1"]{transform:translate(-50%,-50%) translate(200px,-96px) scale(1);transition-delay:.20s}
+  .compass-stage.open .ray[style*="--dir:1"] a{animation-delay:.20s}
+  .compass-stage.open .ray[style*="--dir:2"]{transform:translate(-50%,-50%) translate(-215px,44px) scale(1);transition-delay:.28s}
+  .compass-stage.open .ray[style*="--dir:2"] a{animation-delay:.28s}
+  .compass-stage.open .ray[style*="--dir:3"]{transform:translate(-50%,-50%) translate(200px,44px) scale(1);transition-delay:.36s}
+  .compass-stage.open .ray[style*="--dir:3"] a{animation-delay:.36s}
+  .compass-stage.open .ray[style*="--dir:4"]{transform:translate(-50%,-50%) translate(0,150px) scale(1);transition-delay:.44s}
+  .compass-stage.open .ray[style*="--dir:4"] a{animation-delay:.44s}
+
+  @media(max-width:640px){
+    .compass-stage.open{min-height:auto}
+    .compass-stage.open .ray{
+      position:relative;left:auto;top:auto;transform:none!important;
+      display:block;width:86%;max-width:320px;margin:9px auto 0;transition-delay:0s!important;
+    }
+    .compass-stage.open .ray a{text-align:center}
+    .compass-stage.open .ray[style*="--dir:0"]{margin-top:150px}
+  }
+  @media(prefers-reduced-motion:reduce){
+    .compass-face,.innerglow,.rune-ring,.rune-ring.rev,.needle,.needle-core,.compass-hint,.aura{animation:none!important}
+  }
+
+  /* ===== SPA page switching ===== */  .page{ display:none }
+  .page.active{ display:block }
+  /* pagenav は共通ヘッダーに常時表示 */
+  .pagenav-wrap{
+    background:var(--night);border-bottom:1px solid var(--line);
+    display:flex;align-items:center;justify-content:center;
+    gap:6px;padding:12px 28px;flex-wrap:wrap;font-size:.8rem;letter-spacing:.04em;
+  }
+  .pagenav-wrap a{color:var(--mist);padding:.45em 1em;border-radius:30px;
+    border:1px solid transparent;transition:.25s;white-space:nowrap;text-decoration:none}
+  .pagenav-wrap a:hover{color:var(--first-light);border-color:var(--line)}
+  .pagenav-wrap a.current{color:var(--gold);border-color:rgba(244,163,64,.35);background:rgba(244,163,64,.06)}
+  .pagenav-wrap .sep{color:var(--horizon)}
+
 </style>
 </head>
 <body>
 <nav id="nav">
-  <div class="brand">栗原ゼミアルムナイ</div>
-  </nav>
-<div class="pagenav">
-<a href="index.html" class="current">トップ ── 学びの構造</a><span class="sep">／</span><a href="position.html">ゼミの位置付け</a><span class="sep">／</span><a href="program.html">教育プログラムの特徴</a><span class="sep">／</span><a href="alumni.html">アルムナイ</a><span class="sep">／</span><a href="selection.html">ゼミ選考について</a>
+  <a class="brand" href="#top" style="text-decoration:none;color:inherit">栗原ゼミアルムナイ</a>
+  <a class="nav-cta" href="https://masakikurihara.com" target="_blank" rel="noopener" style="font-size:.8rem;letter-spacing:.12em;padding:.55em 1.3em;border:1px solid rgba(251,227,196,.14);border-radius:40px;color:var(--first-light);transition:.3s;">教員サイト ↗</a>
+</nav>
+<div class="pagenav-wrap" id="pagenav">
+  <a href="#top">トップ ── 学びの構造</a><span class="sep">／</span>
+  <a href="#position">ゼミの位置付け</a><span class="sep">／</span>
+  <a href="#program">教育プログラムの特徴</a><span class="sep">／</span>
+  <a href="#alumni">アルムナイ</a><span class="sep">／</span>
+  <a href="#selection">ゼミ選考について</a>
 </div>
 
+<div class="page active" id="page-top">
 <header class="hero">
   <canvas id="lorenz"></canvas>
   <div class="hero-inner wrap">
@@ -382,6 +520,85 @@
   </div>
   <div class="scrollcue"><span>scroll</span></div>
 </header>
+
+<!-- ===== COMPASS NAV (羅針盤) ===== -->
+<section class="compass-sec">
+  <div class="wrap">
+    <div class="compass-stage" id="eggnav">
+      <button class="compass" id="eggCore" aria-expanded="false" aria-controls="eggnav" type="button" aria-label="羅針盤をひらいて行き先を選ぶ">
+        <!-- 神秘のオーラ（開くと拡がる同心円） -->
+        <span class="aura a1"></span>
+        <span class="aura a2"></span>
+        <span class="aura a3"></span>
+        <!-- 盤面 -->
+        <svg class="compass-face" viewBox="0 0 200 200" aria-hidden="true">
+          <defs>
+            <radialGradient id="cg" cx="38%" cy="32%" r="75%">
+              <stop offset="0%" stop-color="#242a45"/>
+              <stop offset="55%" stop-color="#141a2e"/>
+              <stop offset="100%" stop-color="#0b0e1a"/>
+            </radialGradient>
+            <radialGradient id="cglow" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#F4A340" stop-opacity=".28"/>
+              <stop offset="70%" stop-color="#E8623C" stop-opacity=".06"/>
+              <stop offset="100%" stop-color="#0b0e1a" stop-opacity="0"/>
+            </radialGradient>
+            <filter id="softglow" x="-40%" y="-40%" width="180%" height="180%">
+              <feGaussianBlur stdDeviation="2.2" result="b"/>
+              <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+          </defs>
+
+          <!-- 内なる光 -->
+          <circle class="innerglow" cx="100" cy="100" r="90" fill="url(#cglow)"/>
+          <circle cx="100" cy="100" r="96" fill="url(#cg)" stroke="#F4A340" stroke-opacity=".55" stroke-width="1"/>
+
+          <!-- 回転する外周ルーン環 -->
+          <g class="rune-ring">
+            <circle cx="100" cy="100" r="88" fill="none" stroke="#F4A340" stroke-opacity=".28" stroke-width="1" stroke-dasharray="1.5 7"/>
+          </g>
+          <!-- 逆回転する内環 -->
+          <g class="rune-ring rev">
+            <circle cx="100" cy="100" r="70" fill="none" stroke="#FBE3C4" stroke-opacity=".16" stroke-width="1" stroke-dasharray="0.8 10"/>
+          </g>
+          <circle cx="100" cy="100" r="82" fill="none" stroke="#F4A340" stroke-opacity=".22" stroke-width="1"/>
+
+          <!-- 主目盛り -->
+          <g class="ticks" stroke="#F4A340" stroke-opacity=".5">
+            <line x1="100" y1="8"  x2="100" y2="20"/>
+            <line x1="100" y1="180" x2="100" y2="192"/>
+            <line x1="8"  y1="100" x2="20" y2="100"/>
+            <line x1="180" y1="100" x2="192" y2="100"/>
+            <line x1="41" y1="41" x2="49" y2="49"/>
+            <line x1="159" y1="41" x2="151" y2="49"/>
+            <line x1="41" y1="159" x2="49" y2="151"/>
+            <line x1="159" y1="159" x2="151" y2="151"/>
+          </g>
+          <!-- 方位記号 -->
+          <text x="100" y="30" class="cardinal n" text-anchor="middle">N</text>
+          <text x="100" y="182" class="cardinal" text-anchor="middle">S</text>
+          <text x="16" y="105" class="cardinal" text-anchor="middle">W</text>
+          <text x="184" y="105" class="cardinal" text-anchor="middle">E</text>
+          <!-- 針 -->
+          <g class="needle" filter="url(#softglow)">
+            <polygon points="100,26 108,100 100,116 92,100" fill="#E8623C"/>
+            <polygon points="100,174 108,100 100,84 92,100" fill="#F4A340" fill-opacity=".55"/>
+            <circle cx="100" cy="100" r="6" fill="#FBE3C4"/>
+            <circle class="needle-core" cx="100" cy="100" r="3" fill="#fff"/>
+          </g>
+        </svg>
+        <span class="compass-hint">ひらく</span>
+
+        <!-- 方位の先に現れるリンク -->
+        <span class="ray" style="--dir:0"><a href="#position"><span>ゼミの位置付け</span></a></span>
+        <span class="ray" style="--dir:1"><a href="#program"><span>教育プログラムの特徴</span></a></span>
+        <span class="ray" style="--dir:2"><a href="#alumni"><span>アルムナイ</span></a></span>
+        <span class="ray" style="--dir:3"><a href="#selection"><span>ゼミ選考について</span></a></span>
+        <span class="ray" style="--dir:4"><a href="https://masakikurihara.com" target="_blank" rel="noopener"><span>指導教員を知る ↗</span></a></span>
+      </button>
+    </div>
+  </div>
+</section>
 
 <!-- ===== JOURNEY (学びの構造) ===== -->
 <section>
@@ -403,7 +620,7 @@
         </div>
       </div>
 
-      <a class="stage now" href="position.html">
+      <a class="stage now" href="#program" data-popup="学びを知る">
         <span class="dot"></span>
         <span class="when">YEAR 3 ─ 4</span>
         <span class="where">ゼミでの学び</span>
@@ -411,10 +628,9 @@
           <p class="line">集めたピースを<b>つなぎ、使う</b>。</p>
           <p class="line"><b>問題解決力と、課題設定力</b>の基礎をつくる。</p>
         </div>
-        <span class="goto">ゼミの位置付けへ →</span>
       </a>
 
-      <a class="stage" href="alumni.html">
+      <a class="stage" href="#alumni" data-popup="アルムナイを知る">
         <span class="dot"></span>
         <span class="when">AFTER</span>
         <span class="where">卒業後</span>
@@ -422,25 +638,6 @@
           <p class="line"><b>継続的に学べる場</b>（栗原ゼミアルムナイ）。</p>
           <p class="line">志を共有する仲間と、<b>チャレンジできる環境</b>を創る。</p>
         </div>
-        <span class="goto">アルムナイへ →</span>
-      </a>
-    </div>
-
-    <div class="routes reveal">
-      <a class="route" href="https://masakikurihara.com" target="_blank" rel="noopener">
-        <span class="lbl">指導教員を深く知る</span>
-      </a>
-      <a class="route" href="position.html">
-        <span class="lbl">ゼミの位置付けを知る</span>
-      </a>
-      <a class="route" href="program.html">
-        <span class="lbl">教育プログラムの特徴を知る</span>
-      </a>
-      <a class="route" href="alumni.html">
-        <span class="lbl">アルムナイを知る</span>
-      </a>
-      <a class="route" href="selection.html">
-        <span class="lbl">ゼミ選考について知る</span>
       </a>
     </div>
   </div>
@@ -454,21 +651,558 @@
       <h2>誰かが決めてくれるのを、<br>待たない人へ。</h2>
       <p>リーダーになる必要はありません。けれど、必要な時にリーダーシップを発揮できる人になってほしい。この考え方に共感できる人と、一緒に学びたいと思っています。</p>
       <div class="cta-row">
-        <a class="btn btn-solid" href="position.html">ゼミの位置付けへ ↗</a>
+        <a class="btn btn-solid" href="#position">ゼミの位置付けへ ↗</a>
+      </div>
+    </div>
+  </div>
+</section>
+</div>
+<div class="page" id="page-position">
+<header class="hero" style="min-height:60svh">
+  <canvas id="lorenz-position"></canvas>
+  <div class="hero-inner wrap" style="padding:80px 0 60px">
+    <span class="eyebrow">Position &nbsp;|&nbsp; ゼミの位置付け</span>
+    <h1 style="font-size:clamp(2.1rem,5.4vw,4rem)">「学問」の本来の意味から、<br><span class="glow">考える</span>。</h1>
+    <p class="lead">大学とは何か。ゼミとは何か。<br>栗原ゼミは、その問いから始まる。</p>
+  </div>
+</header>
+
+<!-- ===== TENSIONS ===== -->
+<section class="tensions">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="eyebrow">Who this is for</span>
+      <h2 class="punch-head">「ゼミに打ち込んだ」<br>胸を張れる二年間を過ごす</h2>
+      <p class="dream-note">「大学なんか行っても意味ない」——<br>若者の選択を否定する<br>そんな夢のない言葉を言わない大人になるために<br>充実した大学生活を。</p>
+    </div>
+    <div class="t-grid reveal">
+      <div class="t-cell">
+        <span class="t-num">01</span>
+        <div class="t-main"><em>楽しい</em><span class="vs">but not —</span>楽ではない</div>
+        <p class="t-desc">徹底的に考え、議論し、表現する。知的成長による楽しさは、楽な道の先にはありません。</p>
+      </div>
+      <div class="t-cell">
+        <span class="t-num">02</span>
+        <div class="t-main"><em>優しい</em><span class="vs">but not —</span>甘くない</div>
+        <p class="t-desc">栗原ゼミは、学ぶ意志、変わる意志を持つ人が来る場所です。自己責任で過ごす2年間は、強制されないという厳しさがあります。</p>
+      </div>
+      <div class="t-cell">
+        <span class="t-num">03</span>
+        <div class="t-main"><em>打ち込む</em><span class="vs">and so —</span>胸を張れる</div>
+        <p class="t-desc">「自分はこれに打ち込んだ」。在学中にそう言い切れる過ごし方をしたい人に、この場所は応えます。</p>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- ===== POSITION (大学教育とゼミの位置付け) ===== -->
+<section class="position">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="eyebrow">大学教育とゼミの位置付け</span>
+      <h2>「学問」の本来の意味から、考える。</h2>
+    </div>
+
+    <div class="reveal">
+      <div class="pos-block">
+        <h4>大学と学問の本来の意味</h4>
+        <p>本来、大学は研究者の卵を育てるための「学問」をする場所でした。学問とは、<b>「自ら問うて学ぶ」</b>主体的な学びを意味します。だからこそ大学生は、生徒とは区別して、主体的に学ぶ存在として「学生」と呼ばれてきました。</p>
+      </div>
+
+      <div class="pos-block">
+        <h4>専門分化と学問の構造</h4>
+        <p>学生は専門分野に分かれ、自分が目指す分野の先人の叡智の継承を目的に学びます。「科学」が「分けた科ごとの学」と言われるように、目の前の現象全体をそのまま理解するのは難しく、現象を分解して「狭く・深く」掘り下げることで世界の謎を解き明かそうとしてきました。会計学もまた、社会科学の一領域として情報提供の在り方を追及しています。</p>
+      </div>
+
+      <div class="pos-block">
+        <h4>大学教育の限界と期待ギャップ</h4>
+        <p>大学の学びは、それぞれの専門分野が「深く・狭く」独立して成り立っているため、他分野の知識とどう関連し、全体としてどう考えるかという総合的な学びの機会は多くありません。また、大学は研究者の卵として「過去に明らかになったこと」の継承が中心であり、<b>「その知識を実社会でどう使うか」</b>を学ぶ機会は多くないのです。</p>
+        <p>しかし現実には、多くの学生が研究者の卵ではなく、社会人になる最後の教育機関として大学に進学し、総合的かつ実践的な学びを期待しています。これはどこの大学がどうこうの問題ではなく、<b>大学という制度と学生の期待との間にある、構造的な期待ギャップ</b>です。「大学に行ったけど意味が無かった」という声の原因は、ここにあります。</p>
+      </div>
+
+      <div class="pos-callout">
+        <p>栗原ゼミのカリキュラムは、この期待ギャップを具体的に埋め、<b>「①単なる知識の山から、実際に使える課題解決力に変える」</b>ことを最低ラインの成果として設計しています。課題解決能力は、今後10年程度で生成AIとの関係で大幅に陳腐化するからこそ、これは出発点に過ぎません。そのうえでAI共生社会を前提に、<b>「②現実の世界から問題を発見し、課題を設定する力」「③複数の解決策の中から、最も望ましいものを選択する力」</b>を育てることを目的にカリキュラムを設計しています。②③は、グローバルに見てもMIT・Stanford・Harvardなどで行われている先進的な取り組みと方向性を同じくするものです。</p>
+      </div>
+
+      <div class="pos-block" style="margin-top:2.2em">
+        <h4>学びの到達点と限界</h4>
+        <p>在学中という限られた期間では、②③は「種を植える」ことしかできない可能性があります。①については、本人の取り組み次第で、ある程度「実感できるレベル」になると考えています。</p>
+      </div>
+
+      <div class="pos-block">
+        <h4>ゼミの位置付けと学生の主体性</h4>
+        <p>ゼミは「ゼミ生の主体的な態度」を原動力として運営されるものです。栗原ゼミでは、ゼミを<b>「就職前の最後の教育の砦」</b>と位置付けています。社会に出れば、私たちは自己責任で行動することを求められます。だからこそ、自己責任とは何かを明確に定義したうえで、社会に出る前に「自己責任で学ぶ」体験をしてもらいます。</p>
+      </div>
+
+      <div class="pos-block">
+        <h4>ゼミ運営の基本姿勢</h4>
+        <p>栗原ゼミでは、ゼミ生に「やりなさい」といった管理をするつもりはありません。卒業後の栗原ゼミアルムナイへの参加も、完全に任意です。<b>入ゼミ希望者には、「育ててもらう」のではなく「自分で伸びる」ための場所を得るという意識が必要です。</b></p>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- ===== OS / concept ===== -->
+<section>
+  <div class="wrap">
+    <div class="reveal">
+      <span class="eyebrow">The concept</span>
+      <p class="os-quote" style="margin-top:1em">知識を増やすことが、目的ではありません。<br>知識を使って世界の見方を変え、<br><span class="hl">自分の思考のOSを更新する。</span></p>
+    </div>
+    <div class="os-body reveal">
+      <p>私は大学教育を、ビュッフェレストランのようなものだと考えています。良質で、多様で、栄養のある学びを用意するのが教員の役割。何を選び、どれだけ取り、どう自分の血肉にするかは、学生に委ねられています。</p>
+      <p style="margin-top:1.4em"><strong>栗原ゼミは「育ててもらう場所」ではありません。自分で学びを取りに行く人が、より大きく成長する場所です。</strong>会計、経営、組織、戦略、人間理解、社会、哲学、AI、キャリア、卒業生との対話——国内最高峰のメニューをそろえています。</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===== WHY WHAT HOW ===== -->
+<section class="wwh">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="eyebrow">Why / What / How</span>
+      <h2>なぜ学び、何を学び、どう学ぶのか。</h2>
+    </div>
+    <div class="reveal">
+      <div class="wwh-row">
+        <div class="wwh-key">Why</div>
+        <div>
+          <div class="wwh-q">なぜ学ぶのか。</div>
+          <p class="wwh-a">正解のない世界を、<b>自分の決断を信じて進むための確固たる軸</b>を手に入れるためです。誰かのために勉強するのではありません。自分のために勉強するのです。現実の世界は、教科書の章立て通りには分かれていません。企業の問題には、会計も経営も人間も社会も技術も絡み合う。知識は道具に過ぎません。これから必要なのは知識そのものではなく、<b>何を問題と設定し、どの知識を使い、その判断を自分で引き受けられるか</b>という力です。</p>
+        </div>
+      </div>
+      <div class="wwh-row">
+        <div class="wwh-key">What</div>
+        <div>
+          <div class="wwh-q">何を学ぶのか。</div>
+          <p class="wwh-a">3年次は、<b>課題の要点分析と解決能力</b>を育てます。会計とマネジメントを学び、財務情報から企業の実態を読み取り、経営課題の解決の要点を見つける。4年次は、<b>「良い企業とは何か」</b>という根本の問いに向き合い、「問題発見と課題設定能力」「解決策の選択能力」の種を植えるためのプログラムを行います。生成AIも活用しながら、自分なりの判断軸をつくります。</p>
+
+          <details class="ach det">
+            <summary>
+              <span class="ach-tag">3年次</span>
+              <span class="ach-label">企業を読み解く力を鍛える</span>
+              <span class="ach-ic" aria-hidden="true">+</span>
+            </summary>
+            <div class="ach-body">
+              <p>専門性と、企業を幅広く俯瞰する力。3年次はこの二つを、<b>アカウンティング分野</b>と<b>マネジメント分野</b>に分けて訓練します。基本は事例検討形式です。</p>
+              <h5>アカウンティング ── 財務会計の専門性</h5>
+              <p>「実際の企業の状況」と「財務諸表上の表示」の関係を、企業会計原則・企業会計基準を前提に分析します。狙いは、財務会計論で学んだ知識をもとに、現実の経営実態を会計のルールで財務諸表へ自在に翻訳し、逆に財務情報から企業の実態を再生して語れる力。とりわけ<b>財務領域</b>の能力を実装します。栗原ゼミは制度上、財務会計を専門領域とする専門ゼミとして位置づけられており、その専門性をしっかり磨きます。</p>
+              <h5>マネジメント ── 解決の要点を見つける</h5>
+              <p>理念・戦略・組織・人・会計を横断する学際的プログラム。現実の経営課題は一つの学問領域に切り分けられず、複雑に絡み合います。シンプルな事例から徐々に複雑な事例へ進み、最終的に「不確実な環境下への対応」を扱います。課題解決そのものはAIで陳腐化しますが、<b>「解決の要点」を特定し、具体的な解決案をコーディネートする力</b>は、AIと組み合わせてこそ武器になります。この力を育てることに重点を置きます。</p>
+            </div>
+          </details>
+
+          <details class="ach det">
+            <summary>
+              <span class="ach-tag">4年次</span>
+              <span class="ach-label">「良い企業とは何か」を考える</span>
+              <span class="ach-ic" aria-hidden="true">+</span>
+            </summary>
+            <div class="ach-body">
+              <p>卒業研究と連動し、「良い企業とは何か」という抽象的な問いに向き合います。3年次で課題の要点分析・解決能力を育て、4年次では<b>「問題発見と課題設定能力」「解決策の選択能力」</b>の種を植えます。</p>
+              <h5>問題発見・課題設定力とは</h5>
+              <p>同じものを見ても、他者が気づけない問題が自分には見える──その力の源泉は、「多分こうだろう」という自分なりの基準と現実とのズレ（違和感＝予測誤差）です。基準が無ければ違和感も生まれません。哲学や社会学の知見を援用して「良い」という抽象概念と向き合い、<b>自分なりの判断軸</b>をつくることで、この力を高めます。</p>
+              <h5>ディスカッションと文章化</h5>
+              <p>「ある視点では良いが、別の視点では良くない」と気づける事例を検討し、「良い」という言葉の階層性・多様性を実感します。トロッコ問題のようなシンプルな題材から、「資本主義の功罪＝経済成長と格差」「ホワイト企業と成長機会＝楽なことは良いことか」まで。これは一見、財務会計から外れて見えて、実は会計の最重要論点である<b>「認識」</b>を拡張したものであり、会計的な学習成果の下地になります。</p>
+              <h5>卒業研究 ── 最後の仕上げ</h5>
+              <p>「自分なりの“良い”を定義し、それを現実の世界から識別するための要件にして、文章化する」。生成AIの適切な使い方の指導を含め、積極的に活用します。一度自分で判断軸を構築し、世の中の現象を分析した経験は、成長とともに<b>自分の力で更新していける</b>点に大きな意味があります。</p>
+              <h5>AI共生社会に向けて</h5>
+              <p>従来重視された「課題解決力」は、既に明らかな課題をどう解くかに過ぎません。AI共生社会では、課題解決を人間が担う価値は急速に後退します。より重要なのは<b>「AIに何を解決させるか」を考える力</b>。多面的に解釈し評価する力を育て、問題発見・課題設定能力の種を植えます。</p>
+            </div>
+          </details>
+        </div>
+      </div>
+      <div class="wwh-row">
+        <div class="wwh-key">How</div>
+        <div>
+          <div class="wwh-q">どう学ぶのか。</div>
+          <p class="wwh-a">講義を基礎として、<b>徹底的に考え、議論し、表現する</b>。ケース分析・ディスカッション・プレゼン・レポート・卒業研究。事例を読み、問いを立て、他者と意見を交わし、自分の結論を言葉にする。この繰り返しで、知識は現実を考える道具になります。</p>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
-<footer>
+<!-- ===== CLOSING ===== -->
+<section class="closing">
+  <div class="wrap">
+    <div class="reveal">
+      <span class="eyebrow" style="--ember:#FBE3C4;color:var(--first-light)">At first light</span>
+      <h2>では、その学びは<br>どんな思想で<br>設計されているのか。</h2>
+      <p>世界のトップビジネススクールの教育思想を、学部ゼミの文脈に再構成する。栗原ゼミの教育プログラムの特徴へ。</p>
+      <div class="cta-row">
+        <a class="btn btn-solid" href="#program">教育プログラムの特徴へ ↗</a>
+      </div>
+    </div>
+  </div>
+</section>
+</div>
+<div class="page" id="page-program">
+<header class="hero" style="min-height:60svh">
+  <canvas id="lorenz-program"></canvas>
+  <div class="hero-inner wrap" style="padding:80px 0 60px">
+    <span class="eyebrow">Program</span>
+    <h1 style="font-size:clamp(2.1rem,5.4vw,4rem)">グローバルMBAの教育思想を、<br><span class="glow">学部ゼミ</span>の文脈に再構成する。</h1>
+    <p class="lead">栗原ゼミの学びは、世界のトップビジネススクールが磨いてきた教育メソッドを、<br>学部教育の文脈に翻訳して設計されています。</p>
+  </div>
+</header>
+
+<!-- ===== INTRO ===== -->
+<section>
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="eyebrow">Why this approach</span>
+      <h2>模倣ではなく、再構成。</h2>
+    </div>
+    <div class="os-body reveal">
+      <p>栗原ゼミおよび栗原ゼミアルムナイの学びは、主要なグローバルMBAで重視されてきた教育メソッドや教育コンセプトを参照しつつ、それを<b>学部教育の文脈に合わせて再構成</b>することを基本方針としています。これは、日本の教育が海外に劣っているという意味ではありません。研究者育成のための知識の継承をはじめ、日本の大学教育が世界に通用する部分は数多くあります。</p>
+      <p style="margin-top:1.4em">一方で、知識を実践的に現実へ適用し、不確実な状況に働きかけながら望ましい成果を実現していく<b>マネジメント能力の育成</b>については、米国や欧州のMBAにより長い蓄積があると私は考えています。</p>
+      <p style="margin-top:1.4em">ただし、目指しているのはMBA教育の模倣ではありません。MBAは主に社会人経験者を対象に、経営者・リーダーとしての意思決定力を高める教育です。栗原ゼミは、これから社会に出る学部生を対象としています。だからこそ、<b>MBA的教育のエッセンスを取り入れながら、実務経験や前提となる専門性の不足を考慮したプログラム</b>を構築し、学部生が次世代のリーダーになり得る力を育てることを目的としています。</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FOUR SCHOOLS ===== -->
+<section class="wwh">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="eyebrow">Four pillars</span>
+      <h2>四つの教育思想を、栗原ゼミの言葉に。</h2>
+    </div>
+
+    <div class="reveal">
+      <div class="wwh-row">
+        <div class="wwh-key">HBS</div>
+        <div>
+          <div class="wwh-q">ケースメソッドによる意思決定訓練</div>
+          <p class="wwh-a">栗原ゼミが採用するケースメソッド型の教育は、<b>Harvard Business School</b>に代表されるビジネススクール型教育を参照しています。現実に近い事例をもとに、事実を読み取り、理論を用いて分析し、最終的に<b>「自分ならどう判断するか」</b>を考える。知識の暗記ではなく、不完全な情報の中で状況を把握し、複数の選択肢の中から意思決定する力が問われます。</p>
+          <p class="wwh-a" style="margin-top:1.1em">MBAでは社会人経験者を対象に、実務経験や専門性を前提に膨大な事例情報や財務数値を読み解く訓練が行われます。栗原ゼミでは学部生を対象とすることを踏まえ、<b>数値分析そのものを目的化せず、特定された事実をもとに、理論分析と判断のプロセスを重点的に訓練</b>します。数値分析は重要ですが、AIや外部専門家に支援されやすい領域です。これからの時代により重要になるのは、<b>分析結果をどう解釈し、どの理論で意味づけ、最終的に何を選択するか</b>という判断の部分です。理論の階層に応じて段階的に複数のケースを配置し、理論学習と実践的な分析・判断を経験していきます。</p>
+        </div>
+      </div>
+
+      <div class="wwh-row">
+        <div class="wwh-key">Stanford</div>
+        <div>
+          <div class="wwh-q">自己理解と課題設定力</div>
+          <p class="wwh-a"><b>Stanford Graduate School of Business</b>の教育は、単なる経営スキルの習得にとどまらず、個人の変容、リーダーとしての自己理解、イノベーション、社会的インパクトを重視します。経営者として「何をするか」だけでなく、<b>自分は何者として、何を変えようとするのか</b>が問われます。</p>
+          <p class="wwh-a" style="margin-top:1.1em">栗原ゼミでは、この考え方を<b>課題設定力の育成</b>として取り入れています。現実の社会では、問題は最初から明確な形で与えられるわけではありません。重要なのは、自分なりの基準を持ち、現実とのズレに違和感を覚え、それを<b>問いとして言語化する力</b>です。だから栗原ゼミは「自分なりの“良い”を定義する」「何を問うべきかを考える」という学びを重視します。これは、単に問題を解く力ではなく、<b>そもそも何を問題として捉えるのかを考える力</b>です。</p>
+        </div>
+      </div>
+
+      <div class="wwh-row">
+        <div class="wwh-key">MIT</div>
+        <div>
+          <div class="wwh-q">知識を現実に実装する力</div>
+          <p class="wwh-a"><b>MIT Sloan School of Management</b>は、技術・データ・イノベーションを活用し、知識を現実に実装することを重視するビジネススクールです。栗原ゼミは技術そのものを専門的に教えるわけではありませんが、技術と社会の関係、とりわけ近年では<b>AIと人間の関係</b>を前提に、知識や理論を現実の課題解決に結びつける力を重視しています。</p>
+          <p class="wwh-a" style="margin-top:1.1em">生成AIの発展により、情報収集・整理・文章化・一定の分析や解決案の提示は、急速に効率化されています。だからこそ人間には、<b>AIを使って何を実現するのか、AIに何を問うのか、AIが提示した選択肢をどう評価するのか</b>という上位の判断力が求められます。栗原ゼミは、AIを単なる便利な道具としてではなく、<b>これからの社会の前提</b>として捉え、AI時代における人間の役割を考えながら学びを設計しています。</p>
+        </div>
+      </div>
+
+      <div class="wwh-row">
+        <div class="wwh-key">INSEAD</div>
+        <div>
+          <div class="wwh-q">異なる価値観との対話</div>
+          <p class="wwh-a"><b>INSEAD</b>は、多文化環境の中で、自分とは異なる価値観と向き合いながら判断できるリーダーを育てることに特徴があります。栗原ゼミでも、<b>価値観の相対化</b>を重視しています。私たちは、自分が当然だと思っている社会の仕組みや価値観を、普段は疑わずに生きています。けれど、経済、政治、法、労働、家族、企業、資本主義、民主主義といった社会の構造は、決して唯一絶対のものではありません。</p>
+          <p class="wwh-a" style="margin-top:1.1em">それらを批判的に検討し、相対化することで、自分たちの常識が<b>特定の時代や社会の中で形成されたもの</b>であることに気づくことができます。この気づきは、他者の価値観を理解するためにも、自分自身の判断軸を磨くためにも重要です。仲間との対話、ケース検討、哲学・社会学的な視点を通じて、自分とは異なる立場や価値観を理解し、そのうえで自分なりに判断する力を育てます。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ===== 3・4年次の具体的な学び ===== -->
+<section>
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="eyebrow">Year 3 &amp; 4</span>
+      <h2>3・4年次の具体的な学び。</h2>
+    </div>
+    <div class="reveal">
+      <p class="wwh-a" style="margin-bottom:1.6em">3年次は、<b>課題の要点分析と解決能力</b>を育てます。会計とマネジメントを学び、財務情報から企業の実態を読み取り、経営課題の解決の要点を見つける。4年次は、<b>「良い企業とは何か」</b>という根本の問いに向き合い、「問題発見と課題設定能力」「解決策の選択能力」の種を植えるためのプログラムを行います。生成AIも活用しながら、自分なりの判断軸をつくります。</p>
+
+      <details class="ach det">
+        <summary>
+          <span class="ach-tag">3年次</span>
+          <span class="ach-label">企業を読み解く力を鍛える</span>
+          <span class="ach-ic" aria-hidden="true">+</span>
+        </summary>
+        <div class="ach-body">
+          <p>専門性と、企業を幅広く俯瞰する力。3年次はこの二つを、<b>アカウンティング分野</b>と<b>マネジメント分野</b>に分けて訓練します。基本は事例検討形式です。</p>
+          <h5>アカウンティング ── 財務会計の専門性</h5>
+          <p>「実際の企業の状況」と「財務諸表上の表示」の関係を、企業会計原則・企業会計基準を前提に分析します。狙いは、財務会計論で学んだ知識をもとに、現実の経営実態を会計のルールで財務諸表へ自在に翻訳し、逆に財務情報から企業の実態を再生して語れる力。とりわけ<b>財務領域</b>の能力を実装します。栗原ゼミは制度上、財務会計を専門領域とする専門ゼミとして位置づけられており、その専門性をしっかり磨きます。</p>
+          <h5>マネジメント ── 解決の要点を見つける</h5>
+          <p>理念・戦略・組織・人・会計を横断する学際的プログラム。現実の経営課題は一つの学問領域に切り分けられず、複雑に絡み合います。シンプルな事例から徐々に複雑な事例へ進み、最終的に「不確実な環境下への対応」を扱います。課題解決そのものはAIで陳腐化しますが、<b>「解決の要点」を特定し、具体的な解決案をコーディネートする力</b>は、AIと組み合わせてこそ武器になります。この力を育てることに重点を置きます。</p>
+        </div>
+      </details>
+
+      <details class="ach det" style="margin-top:14px">
+        <summary>
+          <span class="ach-tag">4年次</span>
+          <span class="ach-label">「良い企業とは何か」を考える</span>
+          <span class="ach-ic" aria-hidden="true">+</span>
+        </summary>
+        <div class="ach-body">
+          <p>卒業研究と連動し、「良い企業とは何か」という抽象的な問いに向き合います。3年次で課題の要点分析・解決能力を育て、4年次では<b>「問題発見と課題設定能力」「解決策の選択能力」</b>の種を植えます。</p>
+          <h5>問題発見・課題設定力とは</h5>
+          <p>同じものを見ても、他者が気づけない問題が自分には見える──その力の源泉は、「多分こうだろう」という自分なりの基準と現実とのズレ（違和感＝予測誤差）です。基準が無ければ違和感も生まれません。哲学や社会学の知見を援用して「良い」という抽象概念と向き合い、<b>自分なりの判断軸</b>をつくることで、この力を高めます。</p>
+          <h5>ディスカッションと文章化</h5>
+          <p>「ある視点では良いが、別の視点では良くない」と気づける事例を検討し、「良い」という言葉の階層性・多様性を実感します。トロッコ問題のようなシンプルな題材から、「資本主義の功罪＝経済成長と格差」「ホワイト企業と成長機会＝楽なことは良いことか」まで。これは一見、財務会計から外れて見えて、実は会計の最重要論点である<b>「認識」</b>を拡張したものであり、会計的な学習成果の下地になります。</p>
+          <h5>卒業研究 ── 最後の仕上げ</h5>
+          <p>「自分なりの"良い"を定義し、それを現実の世界から識別するための要件にして、文章化する」。生成AIの適切な使い方の指導を含め、積極的に活用します。一度自分で判断軸を構築し、世の中の現象を分析した経験は、成長とともに<b>自分の力で更新していける</b>点に大きな意味があります。</p>
+          <h5>AI共生社会に向けて</h5>
+          <p>従来重視された「課題解決力」は、既に明らかな課題をどう解くかに過ぎません。AI共生社会では、課題解決を人間が担う価値は急速に後退します。より重要なのは<b>「AIに何を解決させるか」を考える力</b>。多面的に解釈し評価する力を育て、問題発見・課題設定能力の種を植えます。</p>
+        </div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- ===== LEADER VISION ===== -->
+<section class="position">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="eyebrow">Leader, redefined</span>
+      <h2>栗原ゼミが目指すリーダー像。</h2>
+    </div>
+
+    <div class="reveal">
+      <div class="pos-block">
+        <p>栗原ゼミは、グローバルMBAの教育思想を参照しながら、学部ゼミという場に合わせて、<b>ケースメソッド、理論分析、課題設定、AI活用、価値判断</b>を統合した教育プログラムを実践しています。目指しているのは、単に知識を持つ人材ではありません。</p>
+      </div>
+
+      <div class="pos-callout">
+        <p>技術を活用し、他者の価値観を理解する。<br>
+        理論を用いて、客観的・科学的に状況を分析する。<br>
+        そして最後は、<b>自分の判断として選択し、その結果を引き受ける</b>。</p>
+        <p style="margin-top:1.2em">栗原ゼミが育てようとしているのは、このような意味での<b>リーダー</b>です。</p>
+      </div>
+
+      <div class="pos-block" style="margin-top:2.2em">
+        <p>現代社会は、AI技術の発展や価値観の多様化により、これまでの延長線上では予測しにくい変化の中にあります。そのような時代に必要なのは、既に与えられた課題を解くだけの力ではありません。</p>
+        <p>必要なのは、<b>何を問題として捉えるのか、何を解決すべき課題として設定するのか、何を良いと判断するのか、どのようにAIや仲間の力を活用するのか、そして最後にどの選択を自分の責任で引き受けるのか</b>を考える力です。</p>
+        <p>栗原ゼミは、個人ゼミとしての機動力を活かし、社会の不連続な変化を前提とした<b>新しい時代のリーダー</b>を育てるための教育に挑戦しています。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CLOSING ===== -->
+<section class="closing">
+  <div class="wrap">
+    <div class="reveal">
+      <span class="eyebrow" style="--ember:#FBE3C4;color:var(--first-light)">Next step</span>
+      <h2>では、この学びは<br>卒業後どこへ続くのか。</h2>
+      <p>学びは2年間で終わらない。卒業後の学びの共同体──栗原ゼミアルムナイへ。</p>
+      <div class="cta-row">
+        <a class="btn btn-solid" href="#alumni">アルムナイへ ↗</a>
+      </div>
+    </div>
+  </div>
+</section>
+</div>
+<div class="page" id="page-alumni">
+<header class="hero" style="min-height:60svh">
+  <canvas id="lorenz-alumni"></canvas>
+  <div class="hero-inner wrap" style="padding:80px 0 60px">
+    <span class="eyebrow">Alumni Community &nbsp;|&nbsp; 栗原ゼミアルムナイ</span>
+    <h1 style="font-size:clamp(2.1rem,5.4vw,4rem)">学びは、卒業してからも<br><span class="glow">続く</span>。</h1>
+    <p class="lead">不確実な世界を生き抜くための、<br>助け合いのネットワークを創る。</p>
+  </div>
+</header>
+<!-- ===== COMMUNITY / ALUMNI ===== -->
+<section class="community">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="eyebrow">Community ── 栗原ゼミアルムナイ</span>
+      <h2>学びは、卒業してからも続く。</h2>
+    </div>
+
+    <p class="os-quote reveal" style="margin-bottom:.3em">不確実な世界を生き抜くための、<br><span class="hl">助け合いのネットワークを創る。</span></p>
+    <div class="os-body reveal">
+      <p>現代社会は、AI技術の発展や価値観の多様化により、予測不能な変化の中にあります。これは悲観すべき状態ではなく、「予測して準備する」発想から、<b>「環境変化に柔軟に対応できる適応力を上げる」</b>発想へ切り替えることで対処できるものです。適応力を上げるとは、個人の力で立ち向かうのではなく、異なる個性や視点を持つ者同士が深く結びつき、チームとしての総合力で状況に向き合うアプローチです。</p>
+      <p style="margin-top:1.4em">栗原ゼミは、授業としての関係を超え、学生が望めば生涯つながり続けられる学びの共同体を目指しています。2025年10月時点で、現役生と卒業生をあわせて<b>100名超</b>。近年は卒業生だけの勉強会にも毎回20名以上が参加し、世代を超えて価値観を共有する関係が育っています。</p>
+      <p style="margin-top:1.4em"><b>「アルムナイ（Alumni）」</b>は、ラテン語 alumnus（育てられた者・弟子）に由来し、欧米の大学では「卒業後も知を共有し合う学びの共同体」を指します。栗原ゼミでは性別で区分するOB・OGという呼称を用いず、すべての卒業生を包括する呼称として<b>「栗原ゼミアルムナイ」</b>としています。参加は任意です。望む人に、卒業後も学び続けられる場を用意しています。</p>
+    </div>
+
+    <details class="ach det reveal">
+      <summary>
+        <span class="ach-tag">背景</span>
+        <span class="ach-label">教育設計の背景 ── なぜ、こう設計するのか</span>
+        <span class="ach-ic" aria-hidden="true">+</span>
+      </summary>
+      <div class="ach-body">
+        <h5>教育の目的</h5>
+        <p>「エリートを育てる」ために教育を行っているわけではありません。社会は幸せな人間が集まることで幸せになるのであり、人間を社会のための道具として扱うべきではない──そう考えています。教育はあくまで<b>学生本人</b>のためのものであり、社会の豊かさは結果に過ぎません。</p>
+        <h5>教育者としての誠実 ── Integrity</h5>
+        <p>ここでいう誠実とは、<b>自らの行為の結果に責任を引き受ける覚悟</b>（Integrity）です。だから教育は単なる熱意ではなく、合理的に設計されるべきものと位置づけています。とはいえ、これは教員側の覚悟の問題であり、学生に成果の期待を押し付けるものではありません。</p>
+        <h5>科学的根拠に基づく設計</h5>
+        <p>私の教育は、科学的根拠に基づいて目的合理的に設計された、成果のコントロールが可能なプロセスという前提で行っています。文系の学問・科学が机上の空論ではなく、現実に影響を及ぼせるツールであることを示すこと自体が、学びへの好奇心を刺激すると考えるからです。一方、「そもそも何を目的・成果とすべきか」は、哲学という先人の叡智との対話を通じて探求しています。専門家である以前に教養人であるべき、という姿勢の具体化です。</p>
+        <h5>教養 × 科学の融合</h5>
+        <p>この設計の基盤には、生成AIの設計原理や性能的限界、計算資源・電力の制約と技術進化の見通しがあります。また、好奇心の神経科学的なメカニズム、直感力の強化（認知科学・行動遺伝学）、不確実な環境下で勝ち筋を見出す複雑系科学・創発戦略・イノベーション・マネジメントの理論も、設計に落とし込んでいます。プロ講師として約25年、延べ一万数千名を指導してきた経験と、教養・科学の知見を総動員して設計されたのが、いまの栗原ゼミです。</p>
+      </div>
+    </details>
+
+    <details class="ach det reveal">
+      <summary>
+        <span class="ach-tag">これから</span>
+        <span class="ach-label">コミュニティのこれから ── 第2フェーズ</span>
+        <span class="ach-ic" aria-hidden="true">+</span>
+      </summary>
+      <div class="ach-body">
+        <p>栗原は2026年に50歳を迎えます。コミュニティの持続可能性の観点から、<b>栗原個人に依存した属人的な運営からの脱却</b>が課題です。年齢的に、在学生の受け入れは25〜27期生程度までが現実的なライン。その後は、卒業生で構成される栗原ゼミアルムナイへと移行していきます。</p>
+        <h5>第2フェーズへ</h5>
+        <p>今後は、卒業生自身が主体的に運営する<b>自律的な体制</b>へ移行します。栗原が関与しなくても、卒業生同士が支え合い、学び合い、助け合える関係が自然に機能すること。それが目標です。まずは10期生を中心に、仕組みづくりを進めていきます。</p>
+        <h5>世代の役割</h5>
+        <p>受け入れ上限を27期生と見込むと、<b>12〜15期生は現役生と卒業生をつなぐ重要な世代</b>です。そのため12期生以降は、少人数での深い対話を重視し、ゼミ生同士のディスカッションに加えて、栗原との個別対話や卒業生との連携を強化する形へと移行しています。</p>
+      </div>
+    </details>
+  </div>
+</section>
+<!-- ===== CLOSING ===== -->
+<section class="closing">
+  <div class="wrap">
+    <div class="reveal">
+      <span class="eyebrow" style="--ember:#FBE3C4;color:var(--first-light)">Next step</span>
+      <h2>志望純度を、<br>確かめにいく。</h2>
+      <p>伸びる人、来るべきでない人、五つの力、選考の流れ。「ゼミ選考について」へ。</p>
+      <div class="cta-row">
+        <a class="btn btn-solid" href="#selection">ゼミ選考について ↗</a>
+      </div>
+    </div>
+  </div>
+</section>
+</div>
+<div class="page" id="page-selection">
+<header class="hero" style="min-height:46svh">
+  <canvas id="lorenz-selection"></canvas>
+  <div class="hero-inner wrap" style="padding:70px 0 50px">
+    <span class="eyebrow">Selection</span>
+    <h1 style="font-size:clamp(2rem,5vw,3.6rem)">選考について</h1>
+    <p class="lead">伸びる人、来るべきではない人。鍛える五つの力。そして、選抜で重視すること。</p>
+  </div>
+</header>
+
+<!-- ===== FIT ===== -->
+<section>
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="eyebrow">Fit, honestly</span>
+      <h2>すべての人に向くゼミではありません。</h2>
+      <p class="sub">合わないことは、能力の否定ではありません。別の場所の方が、大きく伸びる人もいます。</p>
+    </div>
+    <div class="fit-grid reveal">
+      <div class="fit-card grow">
+        <h3>ここで伸びる人</h3>
+        <ul class="fit-list">
+          <li>自分の人生を、他人任せにしたくない人</li>
+          <li>知識を覚えるだけでなく、使えるようになりたい人</li>
+          <li>前提が崩れた世界でも、考え続けたい人</li>
+          <li>必要な場面で、迷いながらも決断し前に進みたい人</li>
+        </ul>
+      </div>
+      <div class="fit-card cold">
+        <h3>来るべきではない人</h3>
+        <ul class="fit-list">
+          <li>楽に単位を取りたい、細かく管理してほしい人</li>
+          <li>指示されたことだけをこなし、正解を教わりたい人</li>
+          <li>自分の考え方や価値観を、問い直したくない人</li>
+          <li>就活の肩書きとしてだけ、ゼミを使いたい人</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== POWERS ===== -->
+<section class="wwh">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="eyebrow">Five capacities</span>
+      <h2>栗原ゼミで鍛える、五つの力。</h2>
+    </div>
+    <div class="pow-grid reveal">
+      <div class="pow"><span class="k">Read</span><span class="jp">事象の背景を読む</span><span class="d">企業・組織・人間の背後にある構造（メカニズム）を読み取る</span></div>
+      <div class="pow"><span class="k">Ask</span><span class="jp">問う</span><span class="d">前提を疑い、本当に考えるべき問題を見つける</span></div>
+      <div class="pow"><span class="k">Connect</span><span class="jp">体系化</span><span class="d">会計・経営・社会・AIを結びつけて全体として考える</span></div>
+      <div class="pow"><span class="k">Express</span><span class="jp">表現する</span><span class="d">自分の考えを、他者に伝わる形で言語化する</span></div>
+      <div class="pow"><span class="k">Decide</span><span class="jp">決める</span><span class="d">正解のない状況で、根拠を持って判断する</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== SELECTION ===== -->
+<section class="sel">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="eyebrow">Selection</span>
+      <h2>選抜で最も重視するのは、志望純度。</h2>
+    </div>
+
+    <p class="purity reveal">志望純度 <span class="mult">＝</span> ゼミとの適合性 <span class="mult">×</span> 学ぶ意欲</p>
+
+    <details class="ach reveal">
+      <summary>
+        <span class="ach-tag">Attention</span>
+        <span class="ach-label">選抜では「応募時点までの実績」を重視します</span>
+        <span class="ach-ic" aria-hidden="true">+</span>
+      </summary>
+      <div class="ach-body">
+        <p>選抜を行う上で問題となるのは、選抜資料に書かれた言葉だけでは「志望純度の高さ」が評価できないということです。そのため、志望純度の高さを評価する重要な指標として、<b>「①栗原の担当科目の履修状況」「②これまでのゼミ見学、質問・相談などの学ぶ態度」</b>という、応募時点までの実績を重視して選抜を行います。</p>
+        <p>これらは「ゼミとの適合性」を評価する上で重要であることは当然ながら、同時に「やる気」を評価する上でも重要な指標になります。なぜなら、①は履修ガイダンス資料に「履修状況が選考時の基準となる」と明記されており、②は簿記や財務会計論の授業で「質問状況等が選抜時に影響する」と明確に説明されており、「やる気」のある学生であれば、条件を満たすように行動することが十分可能であったからです。そのため、<b>①②の実績が既にある学生は「学習内容への興味＝ゼミとの適合性」「やる気」が行動で証明済み</b>と評価できることになります。</p>
+        <p>一方で、応募時点での実績が無い学生を排除するつもりはありません。このゼミ選考において、初めて真剣に所属ゼミに向き合った学生も多いはずです。<b>面談でのやり取りや志望理由の記載で、志望純度がしっかりと確認できれば入ゼミは可能です。</b></p>
+      </div>
+    </details>
+
+    <div class="sel-meta reveal">
+      <div class="chip"><div class="lab">募集時期</div><div class="big">例年 11–12月頃<br><small>翌年4月 入ゼミ</small></div></div>
+      <div class="chip"><div class="lab">受け入れ</div><div class="big">8名 程度<br><small>少人数・深い対話を重視</small></div></div>
+      <div class="chip"><div class="lab">12期（2026年4月）実績</div><div class="big">入ゼミ 12名<br><small>目安倍率 約2倍（最終エントリーに至らなかった辞退者を含む）</small></div></div>
+    </div>
+    <p class="presemi reveal">なお、入ゼミ予定者は、2月頃から5回程度の<b>プレゼミ・プレ合宿</b>があります。</p>
+
+    <div id="flow" class="steps reveal" style="scroll-margin-top:90px">
+      <div class="step">
+        <span class="sn">Step 01</span>
+        <h4>ゼミ説明と質問</h4>
+        <p>11月頃、財務会計論Ⅱの授業内で説明。興味を持ったら、配布資料のQRからオープンチャットに登録してください。</p>
+      </div>
+      <div class="step">
+        <span class="sn">Step 02</span>
+        <h4>ゼミ見学と質問</h4>
+        <p>月曜の3・4限（4年）／5・6限（3年）。内容的には5・6限がより参考になります。先輩の様子もぜひ。</p>
+      </div>
+      <div class="step">
+        <span class="sn">Step 03</span>
+        <h4>個別面談</h4>
+        <p>エントリー希望者は予約制（先着）で面談。対面・オンライン・集団形式のいずれか。志望純度を確認します。</p>
+      </div>
+    </div>
+    <p class="sub reveal" style="color:var(--mist);font-size:.9rem;margin-top:30px">※ 連絡は原則オープンチャットに一元化。メールでの個別対応は行いません（プライベートな事情を除く）。</p>
+  </div>
+</section>
+
+<!-- ===== CLOSING ===== -->
+<section class="closing">
+  <div class="wrap">
+    <div class="reveal">
+      <span class="eyebrow" style="--ember:#FBE3C4;color:var(--first-light)">At first light</span>
+      <h2>誰かが決めてくれるのを、<br>待たない人へ。</h2>
+      <p>リーダーになる必要はありません。けれど、必要な時にリーダーシップを発揮できる人になってほしい。この考え方に共感できる人と、一緒に学びたいと思っています。</p>
+      <div class="cta-row">
+        <a class="btn btn-solid" href="#top">トップへ戻る ↗</a>
+      </div>
+    </div>
+  </div>
+</section>
+</div>
+<footer id="site-footer">
   <div class="wrap">
     <p>茨城キリスト教大学　経営学部 経営学科</p>
     <p class="mincho" style="margin-top:.5em;font-size:1.1rem">栗原正樹ゼミ ／ 栗原ゼミアルムナイ</p>
-    <p style="margin-top:.6em">トップ：学びの構造</p>
   </div>
 </footer>
 
 <script>
+
 /* ---------- nav solid on scroll ---------- */
 const nav=document.getElementById('nav');
 addEventListener('scroll',()=>nav.classList.toggle('solid',scrollY>40),{passive:true});
@@ -482,9 +1216,13 @@ document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
 /* ---------- LORENZ ATTRACTOR — dawn rising through chaos ---------- */
 (function(){
   const canvas=document.getElementById('lorenz');
+  if(!canvas||!canvas.getContext) return; // top page only
   const ctx=canvas.getContext('2d');
   const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
   let W,H,DPR,cx,cy,scale;
+  let ang=-0.5, head=0;
+  const TRAIL=520;      // 明るく光る先頭トレイルの長さ
+  const SPEED=9;        // 1フレームで進むステップ数
 
   // dawn gradient stops (cool night -> warm dawn), index normalized 0..1
   const stops=[
@@ -524,7 +1262,6 @@ document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
     ctx.setTransform(DPR,0,0,DPR,0,0);
     cx=W*(W>880?0.62:0.5); cy=H*0.46;
     scale=Math.min(W,H)/(W>880?56:46);
-    if(reduce) frame(); // 静止モードでも再描画
   }
   // robust resize: ResizeObserver + DPR(zoom)変化監視 + visualViewport
   function safeResize(){ try{ resize(); }catch(_){} }
@@ -543,43 +1280,139 @@ document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
     visualViewport.addEventListener('scroll', safeResize, {passive:true});
   }
 
-  let ang=-0.5, drawn= reduce?N:0;
   function frame(){
+    // canvasが非表示(サイズ0)の間は描画せず、ループだけ継続
+    const cw=canvas.clientWidth, ch=canvas.clientHeight;
+    if(cw<2||ch<2){ if(!reduce) requestAnimationFrame(frame); return; }
+    if(cw!==W||ch!==H){ safeResize(); }
     ctx.clearRect(0,0,W,H);
     const cosA=Math.cos(ang), sinA=Math.sin(ang);
-    ctx.lineWidth=0.8; ctx.lineCap='round';
+    ctx.lineCap='round';
+
+    // ---- 1) 軌道全体をごく薄く常時描く（世界の骨格） ----
+    ctx.lineWidth=0.9;
     let px,py;
-    const upto = reduce?N:Math.min(drawn,N);
-    for(let i=0;i<upto;i++){
-      let x=pts[i*3], y=pts[i*3+1], z=pts[i*3+2];
-      // rotate around vertical axis
+    for(let i=0;i<N;i++){
+      const x=pts[i*3], y=pts[i*3+1], z=pts[i*3+2];
       const rx=x*cosA - y*sinA;
       const sx=cx+rx*scale;
       const sy=cy+(z-25)*scale*-1;
       if(i>0){
-        const t=i/N;
-        ctx.strokeStyle=dawn(t);
-        ctx.globalAlpha = reduce?0.42:(i>drawn-90? 0.6 : 0.3); // softer, fainter
+        ctx.strokeStyle=dawn(i/N);
+        ctx.globalAlpha = reduce?0.42:0.30;
         ctx.beginPath(); ctx.moveTo(px,py); ctx.lineTo(sx,sy); ctx.stroke();
       }
       px=sx; py=sy;
     }
-    // glowing head
-    if(!reduce && drawn>1 && drawn<=N){
-      ctx.globalAlpha=.7; ctx.fillStyle='rgb(251,227,196)';
-      ctx.shadowColor='rgba(244,163,64,.7)'; ctx.shadowBlur=9;
-      ctx.beginPath(); ctx.arc(px,py,1.5,0,7); ctx.fill(); ctx.shadowBlur=0;
+
+    if(!reduce){
+      // ---- 2) 先頭トレイルを明るく描く（流れ続ける光） ----
+      ctx.lineWidth=1.15;
+      let lx,ly,hx,hy;
+      for(let k=0;k<TRAIL;k++){
+        const idx=(head - (TRAIL-1) + k + N) % N;
+        // 連続点のみ結線（ループ境界の飛びは描かない）
+        const x=pts[idx*3], y=pts[idx*3+1], z=pts[idx*3+2];
+        const rx=x*cosA - y*sinA;
+        const sx=cx+rx*scale;
+        const sy=cy+(z-25)*scale*-1;
+        if(k>0 && idx!==0){
+          const f=k/TRAIL;                 // 0=尾, 1=先頭
+          ctx.strokeStyle=dawn(idx/N);
+          ctx.globalAlpha = 0.15 + f*f*0.85; // 先頭ほど明るく、尾も見える
+          ctx.beginPath(); ctx.moveTo(lx,ly); ctx.lineTo(sx,sy); ctx.stroke();
+        }
+        lx=sx; ly=sy; hx=sx; hy=sy;
+      }
+      // ---- 3) 発光する先頭 ----
+      ctx.globalAlpha=1; ctx.fillStyle='rgb(251,227,196)';
+      ctx.shadowColor='rgba(244,163,64,.9)'; ctx.shadowBlur=16;
+      ctx.beginPath(); ctx.arc(hx,hy,2.2,0,7); ctx.fill();
+      ctx.shadowBlur=0;
     }
     ctx.globalAlpha=1;
 
     if(!reduce){
-      if(drawn<N) drawn+=14;        // draw the trajectory in
-      ang+=0.0042;                   // clearer continuous rotation
+      head=(head+SPEED)%N;   // 光が軌道上を延々と走り続ける
+      ang+=0.0034;           // ゆっくり回転し続ける
       requestAnimationFrame(frame);
     }
   }
   frame();
 })();
+
+
+/* ===== EGG NAV open/close ===== */
+(function(){
+  var wrap = document.getElementById('eggnav');
+  var core = document.getElementById('eggCore');
+  if(!wrap || !core) return;
+  function open(){ wrap.classList.add('open'); core.setAttribute('aria-expanded','true'); }
+  function close(){ wrap.classList.remove('open'); core.setAttribute('aria-expanded','false'); }
+  function toggle(){ wrap.classList.contains('open') ? close() : open(); }
+  core.addEventListener('click', function(e){ e.stopPropagation(); toggle(); });
+  // 行き先クリック：羅針盤のtoggleを止め、閉じてから遷移
+  wrap.querySelectorAll('.ray a').forEach(function(a){
+    a.addEventListener('click', function(e){ e.stopPropagation(); setTimeout(close, 80); });
+  });
+  // 外側クリックで閉じる
+  document.addEventListener('click', function(e){
+    if(wrap.classList.contains('open') && !wrap.contains(e.target)) close();
+  });
+  // Escで閉じる
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'Escape') close();
+  });
+})();
+
+/* ===== SPA hash router ===== */
+(function(){
+  var pages   = ['top','position','program','alumni','selection'];
+  var navEl   = document.getElementById('pagenav');
+
+  function show(hash){
+    var id = hash.replace('#','') || 'top';
+    if(!pages.includes(id)) id = 'top';
+    pages.forEach(function(p){
+      var el = document.getElementById('page-'+p);
+      if(el) el.classList.toggle('active', p === id);
+    });
+    // pagenav current
+    navEl.querySelectorAll('a').forEach(function(a){
+      a.classList.toggle('current', a.getAttribute('href') === '#'+id);
+    });
+    // lorenz は top のみ canvas あり
+    window.scrollTo(0,0);
+    // reveal reset for newly shown page
+    document.querySelectorAll('#page-'+id+' .reveal').forEach(function(el){
+      el.classList.remove('in');
+    });
+    setTimeout(function(){
+      ioReveal.disconnect();
+      document.querySelectorAll('#page-'+id+' .reveal').forEach(function(el){
+        ioReveal.observe(el);
+      });
+    },40);
+  }
+
+  window.addEventListener('hashchange', function(){ show(location.hash); });
+  // intercept internal links
+  document.addEventListener('click', function(e){
+    var a = e.target.closest('a[href^="#"]');
+    if(!a) return;
+    var hash = a.getAttribute('href');
+    if(hash === location.hash){ show(hash); }
+    // else hashchange fires
+  });
+  // IntersectionObserver (shared with lorenz script)
+  window.ioReveal = new IntersectionObserver(function(es){
+    es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); ioReveal.unobserve(e.target); } });
+  },{threshold:.16});
+
+  // initial
+  show(location.hash || '#top');
+})();
+
 </script>
 </body>
 </html>

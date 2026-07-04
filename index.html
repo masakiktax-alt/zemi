@@ -507,17 +507,19 @@
     100%{box-shadow:0 8px 20px rgba(0,0,0,.4)}
   }
 
-  /* 5方位に配置 */
-  .compass-stage.open .ray[style*="--dir:0"]{transform:translate(-50%,-50%) translate(-200px,-96px) scale(1);transition-delay:.12s}
-  .compass-stage.open .ray[style*="--dir:0"] a{animation-delay:.12s}
-  .compass-stage.open .ray[style*="--dir:1"]{transform:translate(-50%,-50%) translate(200px,-96px) scale(1);transition-delay:.20s}
-  .compass-stage.open .ray[style*="--dir:1"] a{animation-delay:.20s}
-  .compass-stage.open .ray[style*="--dir:2"]{transform:translate(-50%,-50%) translate(-215px,44px) scale(1);transition-delay:.28s}
-  .compass-stage.open .ray[style*="--dir:2"] a{animation-delay:.28s}
-  .compass-stage.open .ray[style*="--dir:3"]{transform:translate(-50%,-50%) translate(200px,44px) scale(1);transition-delay:.36s}
-  .compass-stage.open .ray[style*="--dir:3"] a{animation-delay:.36s}
-  .compass-stage.open .ray[style*="--dir:4"]{transform:translate(-50%,-50%) translate(0,150px) scale(1);transition-delay:.44s}
-  .compass-stage.open .ray[style*="--dir:4"] a{animation-delay:.44s}
+  /* 6方位に配置 */
+  .compass-stage.open .ray[style*="--dir:0"]{transform:translate(-50%,-50%) translate(-225px,-106px) scale(1);transition-delay:.10s}
+  .compass-stage.open .ray[style*="--dir:0"] a{animation-delay:.10s}
+  .compass-stage.open .ray[style*="--dir:1"]{transform:translate(-50%,-50%) translate(225px,-106px) scale(1);transition-delay:.18s}
+  .compass-stage.open .ray[style*="--dir:1"] a{animation-delay:.18s}
+  .compass-stage.open .ray[style*="--dir:2"]{transform:translate(-50%,-50%) translate(-245px,34px) scale(1);transition-delay:.26s}
+  .compass-stage.open .ray[style*="--dir:2"] a{animation-delay:.26s}
+  .compass-stage.open .ray[style*="--dir:3"]{transform:translate(-50%,-50%) translate(245px,34px) scale(1);transition-delay:.34s}
+  .compass-stage.open .ray[style*="--dir:3"] a{animation-delay:.34s}
+  .compass-stage.open .ray[style*="--dir:4"]{transform:translate(-50%,-50%) translate(-170px,160px) scale(1);transition-delay:.42s}
+  .compass-stage.open .ray[style*="--dir:4"] a{animation-delay:.42s}
+  .compass-stage.open .ray[style*="--dir:5"]{transform:translate(-50%,-50%) translate(170px,160px) scale(1);transition-delay:.50s}
+  .compass-stage.open .ray[style*="--dir:5"] a{animation-delay:.50s}
 
   @media(max-width:640px){
     .compass-stage.open{min-height:auto}
@@ -546,6 +548,38 @@
   .pagenav-wrap a.current{color:var(--gold);border-color:rgba(244,163,64,.35);background:rgba(244,163,64,.06)}
   .pagenav-wrap .sep{color:var(--horizon)}
 
+
+  /* ---------- floating back-to-top button ---------- */
+  .backtop{
+    position:fixed;right:22px;bottom:calc(22px + env(safe-area-inset-bottom));z-index:80;
+    display:inline-flex;align-items:center;gap:.55em;
+    padding:.78em 1.05em .78em 1.18em;border-radius:999px;
+    background:linear-gradient(145deg,rgba(19,23,42,.82),rgba(11,14,26,.72));
+    border:1px solid rgba(244,163,64,.42);color:var(--first-light);
+    box-shadow:0 14px 34px rgba(0,0,0,.38), inset 0 0 0 1px rgba(251,227,196,.05);
+    backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+    font-family:"Fraunces",serif;font-style:italic;font-size:.78rem;letter-spacing:.14em;
+    opacity:0;transform:translateY(16px) scale(.96);pointer-events:none;
+    transition:opacity .35s ease,transform .35s ease,border-color .3s ease,box-shadow .3s ease,background .3s ease;
+  }
+  .backtop::before{
+    content:"";position:absolute;inset:5px;border-radius:999px;
+    border:1px solid rgba(251,227,196,.08);pointer-events:none;
+  }
+  .backtop em{
+    display:grid;place-items:center;width:26px;height:26px;border-radius:50%;
+    background:var(--gold);color:var(--abyss);font-style:normal;font-family:"Zen Kaku Gothic New",sans-serif;
+    line-height:1;box-shadow:0 0 18px rgba(244,163,64,.45);
+    transition:transform .3s ease;
+  }
+  .backtop.show{opacity:1;transform:none;pointer-events:auto}
+  .backtop:hover{border-color:var(--gold);background:linear-gradient(145deg,rgba(24,29,52,.92),rgba(11,14,26,.82));box-shadow:0 18px 44px rgba(0,0,0,.46),0 0 24px rgba(244,163,64,.16)}
+  .backtop:hover em{transform:translateY(-2px)}
+  @media(max-width:640px){
+    .backtop{right:14px;bottom:calc(14px + env(safe-area-inset-bottom));padding:.72em .88em;font-size:.7rem}
+    .backtop span{display:none}
+  }
+
 </style>
 </head>
 <body>
@@ -558,8 +592,10 @@
   <a href="#position">ゼミの位置付け</a><span class="sep">／</span>
   <a href="#program">教育プログラムの特徴</a><span class="sep">／</span>
   <a href="#alumni">アルムナイ</a><span class="sep">／</span>
+  <a href="#careers">卒業後の進路</a><span class="sep">／</span>
   <a href="#selection">ゼミ選考について</a>
 </div>
+<a class="backtop" id="backTop" href="#top" aria-label="トップに戻る"><span>Top</span><em>↑</em></a>
 
 <div class="page active" id="page-top">
 <header class="hero">
@@ -644,8 +680,9 @@
         <span class="ray" style="--dir:0"><a href="#position"><span>ゼミの位置付け</span></a></span>
         <span class="ray" style="--dir:1"><a href="#program"><span>教育プログラムの特徴</span></a></span>
         <span class="ray" style="--dir:2"><a href="#alumni"><span>アルムナイ</span></a></span>
-        <span class="ray" style="--dir:3"><a href="#selection"><span>ゼミ選考について</span></a></span>
-        <span class="ray" style="--dir:4"><a href="https://masakikurihara.com" target="_blank" rel="noopener"><span>指導教員を知る ↗</span></a></span>
+        <span class="ray" style="--dir:3"><a href="#careers"><span>卒業後の進路</span></a></span>
+        <span class="ray" style="--dir:4"><a href="#selection"><span>ゼミ選考について</span></a></span>
+        <span class="ray" style="--dir:5"><a href="https://masakikurihara.com" target="_blank" rel="noopener"><span>指導教員を知る ↗</span></a></span>
       </button>
     </div>
   </div>
@@ -691,9 +728,7 @@
         </div>
       </a>
 
-      <div class="stage grad-cta" data-popup="活躍を知る" role="link" tabindex="0"
-           onclick="document.getElementById('graduates').scrollIntoView({behavior:'smooth'})"
-           onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();document.getElementById('graduates').scrollIntoView({behavior:'smooth'})}">
+      <a class="stage grad-cta" href="#careers" data-popup="進路を知る">
         <span class="dot"></span>
         <span class="when">STORIES</span>
         <span class="where">卒業後の活躍</span>
@@ -701,52 +736,12 @@
           <p class="line"><b>起業・独立</b>など、卒業生の実例。</p>
           <p class="line">学びを、<b>自分の仕事</b>に変えた先輩たち。</p>
         </div>
-      </div>
+      </a>
     </div>
   </div>
 </section>
 
-<!-- ===== GRADUATES (卒業後の活躍) ===== -->
-<section id="graduates" class="grad-sec" style="scroll-margin-top:90px">
-  <div class="wrap">
-    <div class="sec-head reveal">
-      <span class="eyebrow">Alumni stories</span>
-      <h2>卒業後の活躍。</h2>
-      <p class="sub">学びを道具として使い、自分の問いに向き合う場を、自ら作った先輩たち。</p>
-    </div>
 
-    <div class="grad-grid reveal">
-      <!-- 関 春樹 -->
-      <article class="grad-card">
-        <div class="grad-head">
-          <span class="grad-cohort">5期生</span>
-          <h3 class="grad-name">関 春樹</h3>
-          <p class="grad-title">起業家 ／ 経営支援・起業家支援</p>
-        </div>
-        <p class="grad-bio">茨城生まれ、京都在住。20歳のとき「地域×学生×イベント事業」で学生起業。しかし新型コロナウイルスの影響で事業継続を断念。経営と財務の深い知識を身につけるため税理士法人に入社し、税務顧問、MAS監査、経理代行、採用、経理育成支援事業の事業責任者まで幅広く経験して独立。</p>
-        <p class="grad-bio">「<b>ワクワクを創造する起爆剤に</b>」をモットーに、起業家支援・経営支援を軸として、東京・京都・茨城の3拠点で活動中。今の目標は、大学で教鞭をとること、そして47都道府県に友達を作ること。</p>
-        <div class="grad-links">
-          <a href="https://co-omusubi.jp/" target="_blank" rel="noopener">株式会社想結び ↗</a>
-          <a href="https://civic-compass-forum.com/" target="_blank" rel="noopener">Civic Compass Forum ↗</a>
-        </div>
-      </article>
-
-      <!-- 髙橋 瑠依 -->
-      <article class="grad-card">
-        <div class="grad-head">
-          <span class="grad-cohort">9期生</span>
-          <h3 class="grad-name">髙橋 瑠依</h3>
-          <p class="grad-title">合同会社ProfeSsions Edge　業務執行役（AI事業）</p>
-        </div>
-        <p class="grad-bio">「就職活動しないと」と漠然と考える茨城の一学生だったが、栗原との出会いをきっかけに黎明期の生成AIの可能性に気づく。SNSでの発信を続けた結果、在学中から東京のスタートアップ企業でAI関連事業の開発に従事。AI研修の企画設計・講師を務め、<b>フォロワー11万人のAIインフルエンサー</b>としても活動した（現在は非関与）。</p>
-        <p class="grad-bio">現在はチテキウムのAIアライメント事業を率いる。「地方の一学生だった私が、テクノロジーによって人生の選択肢を広げられたように——<b>次は、誰かの可能性を広げる側へ。</b>」</p>
-        <div class="grad-links">
-          <a href="https://chitekium.com/" target="_blank" rel="noopener">チテキウム ↗</a>
-        </div>
-      </article>
-    </div>
-  </div>
-</section>
 
 <!-- ===== CLOSING ===== -->
 <section class="closing">
@@ -932,7 +927,7 @@
     <div class="reveal">
       <span class="eyebrow" style="--ember:#FBE3C4;color:var(--first-light)">At first light</span>
       <h2>では、その学びは<br>どんな思想で<br>設計されているのか。</h2>
-      <p>世界のトップビジネススクールの教育思想を、学部ゼミの文脈に再構成する。栗原ゼミの教育プログラムの特徴へ。</p>
+      <p>次代に求められる力を育てる教育を追求した先で、世界のビジネススクールと重なる到達点にたどり着いた。その手法や方向性を、学部ゼミの文脈に再構成する。</p>
       <div class="cta-row">
         <a class="btn btn-solid" href="#program">教育プログラムの特徴へ ↗</a>
       </div>
@@ -945,8 +940,8 @@
   <canvas id="lorenz-program"></canvas>
   <div class="hero-inner wrap" style="padding:80px 0 60px">
     <span class="eyebrow">Program</span>
-    <h1 style="font-size:clamp(2.1rem,5.4vw,4rem)">グローバルMBAの教育思想を、<br><span class="glow">学部ゼミ</span>の文脈に再構成する。</h1>
-    <p class="lead">栗原ゼミの学びは、世界のトップビジネススクールが磨いてきた教育メソッドを、<br>学部教育の文脈に翻訳して設計されています。</p>
+    <h1 style="font-size:clamp(2.1rem,5.4vw,4rem)">次代に求められる力を追求した先に、<br><span class="glow">MBA的教育</span>との接点があった。</h1>
+    <p class="lead">栗原ゼミの学びは、MBA教育の模倣ではありません。<br>学生に必要な力を突き詰めた結果、世界のビジネススクールと重なる到達点にたどり着きました。</p>
   </div>
 </header>
 
@@ -958,9 +953,9 @@
       <h2>模倣ではなく、再構成。</h2>
     </div>
     <div class="os-body reveal">
-      <p>栗原ゼミおよび栗原ゼミアルムナイの学びは、主要なグローバルMBAで重視されてきた教育メソッドや教育コンセプトを参照しつつ、それを<b>学部教育の文脈に合わせて再構成</b>することを基本方針としています。これは、日本の教育が海外に劣っているという意味ではありません。研究者育成のための知識の継承をはじめ、日本の大学教育が世界に通用する部分は数多くあります。</p>
-      <p style="margin-top:1.4em">一方で、知識を実践的に現実へ適用し、不確実な状況に働きかけながら望ましい成果を実現していく<b>マネジメント能力の育成</b>については、米国や欧州のMBAにより長い蓄積があると私は考えています。</p>
-      <p style="margin-top:1.4em">ただし、目指しているのはMBA教育の模倣ではありません。MBAは主に社会人経験者を対象に、経営者・リーダーとしての意思決定力を高める教育です。栗原ゼミは、これから社会に出る学部生を対象としています。だからこそ、<b>MBA的教育のエッセンスを取り入れながら、実務経験や前提となる専門性の不足を考慮したプログラム</b>を構築し、学部生が次世代のリーダーになり得る力を育てることを目的としています。</p>
+      <p>栗原ゼミおよび栗原ゼミアルムナイの学びは、最初からMBA教育を移植しようとして設計したものではありません。AI共生社会において学生にどのような力が求められるのかを考え抜き、現実から問題を発見し、理論で分析し、複数の選択肢の中から自分の判断として決める力を育てる教育を追求してきました。その結果、主要なグローバルMBAが重視してきた教育思想やメソッドと、目指す到達点が重なっていることに気づきました。</p>
+      <p style="margin-top:1.4em">つまり、MBAは出発点ではなく、栗原ゼミの教育を構成するための重要な参照枠です。ケースメソッド、理論分析、課題設定、ディスカッション、プレゼンテーション、卒業後も続く学びの共同体。こうした要素を<b>パズルのピース</b>として受け取り、学部生の発達段階や日本の大学教育の文脈に合わせて組み替えることで、現在のメソッドを作っています。</p>
+      <p style="margin-top:1.4em">これは、日本の教育が海外に劣っているという意味ではありません。研究者育成のための知識の継承をはじめ、日本の大学教育が世界に通用する部分は数多くあります。一方で、知識を実践的に現実へ適用し、不確実な状況に働きかけながら望ましい成果を実現していく<b>マネジメント能力の育成</b>については、米国や欧州のMBAに長い蓄積があります。だからこそ、その手法や方向性を素材として参照し、<b>模倣ではなく、学部ゼミの文脈に再構成</b>しています。</p>
     </div>
   </div>
 </section>
@@ -1071,20 +1066,20 @@
 
     <div class="reveal">
       <div class="pos-block">
-        <p>栗原ゼミは、グローバルMBAの教育思想を参照しながら、学部ゼミという場に合わせて、<b>ケースメソッド、理論分析、課題設定、AI活用、価値判断</b>を統合した教育プログラムを実践しています。目指しているのは、単に知識を持つ人材ではありません。</p>
+        <p>栗原ゼミは、MBA教育を模倣しているのではありません。次代に求められる力を育てる教育を追求した結果、グローバルMBAが重視してきた教育思想や手法と同じ方向に到達しました。そのうえで、それらをパズルのピースとして受け取り、学部ゼミという場に合わせて、<b>ケースメソッド、理論分析、課題設定、AI活用、価値判断</b>を統合した教育プログラムを実践しています。目指しているのは、単に知識を持つ人材ではありません。</p>
       </div>
 
       <div class="pos-callout">
         <p>技術を活用し、他者の価値観を理解する。<br>
         理論を用いて、客観的・科学的に状況を分析する。<br>
         そして最後は、<b>自分の判断として選択し、その結果を引き受ける</b>。</p>
-        <p style="margin-top:1.2em">栗原ゼミが育てようとしているのは、このような意味での<b>リーダー</b>です。</p>
+        <p style="margin-top:1.2em">栗原ゼミが育てているのは、リーダーそのものではありません。<b>リーダーになれる人</b>です。<br>なるかどうかは、自分で決めればよい。</p>
       </div>
 
       <div class="pos-block" style="margin-top:2.2em">
         <p>現代社会は、AI技術の発展や価値観の多様化により、これまでの延長線上では予測しにくい変化の中にあります。そのような時代に必要なのは、既に与えられた課題を解くだけの力ではありません。</p>
         <p>必要なのは、<b>何を問題として捉えるのか、何を解決すべき課題として設定するのか、何を良いと判断するのか、どのようにAIや仲間の力を活用するのか、そして最後にどの選択を自分の責任で引き受けるのか</b>を考える力です。</p>
-        <p>栗原ゼミは、個人ゼミとしての機動力を活かし、社会の不連続な変化を前提とした<b>新しい時代のリーダー</b>を育てるための教育に挑戦しています。</p>
+        <p>栗原ゼミは、個人ゼミとしての機動力を活かし、社会の不連続な変化を前提とした、<b>新しい時代のリーダーになれる人</b>を育てるための教育に挑戦しています。</p>
       </div>
     </div>
   </div>
@@ -1167,8 +1162,75 @@
   <div class="wrap">
     <div class="reveal">
       <span class="eyebrow" style="--ember:#FBE3C4;color:var(--first-light)">Next step</span>
-      <h2>志望純度を、<br>確かめにいく。</h2>
-      <p>伸びる人、来るべきでない人、五つの力、選考の流れ。「ゼミ選考について」へ。</p>
+      <h2>学びの先に、<br>どんな道があるのか。</h2>
+      <p>就職、起業、独立——学びを道具として自分の進路を決めた先輩たち。卒業後の進路へ。</p>
+      <div class="cta-row">
+        <a class="btn btn-solid" href="#careers">卒業後の進路 ↗</a>
+      </div>
+    </div>
+  </div>
+</section>
+</div>
+
+<div class="page" id="page-careers">
+<header class="hero" style="min-height:46svh">
+  <canvas id="lorenz-careers"></canvas>
+  <div class="hero-inner wrap" style="padding:70px 0 50px">
+    <span class="eyebrow">Career paths</span>
+    <h1 style="font-size:clamp(2rem,5vw,3.6rem)">卒業後の進路</h1>
+    <p class="lead">就職、起業、独立——道はひとつではない。<br>学びを道具として、自分の進路を自分で決めた先輩たち。</p>
+  </div>
+</header>
+
+<!-- ===== GRADUATES (卒業後の活躍) ===== -->
+<section id="graduates" class="grad-sec" style="scroll-margin-top:90px">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="eyebrow">Alumni stories</span>
+      <h2>卒業後の活躍。</h2>
+      <p class="sub">学びを道具として使い、自分の問いに向き合う場を、自ら作った先輩たち。</p>
+    </div>
+
+    <div class="grad-grid reveal">
+      <!-- 関 春樹 -->
+      <article class="grad-card">
+        <div class="grad-head">
+          <span class="grad-cohort">5期生</span>
+          <h3 class="grad-name">関 春樹</h3>
+          <p class="grad-title">起業家 ／ 経営支援・起業家支援</p>
+        </div>
+        <p class="grad-bio">茨城生まれ、京都在住。20歳のとき「地域×学生×イベント事業」で学生起業。しかし新型コロナウイルスの影響で事業継続を断念。経営と財務の深い知識を身につけるため税理士法人に入社し、税務顧問、MAS監査、経理代行、採用、経理育成支援事業の事業責任者まで幅広く経験して独立。</p>
+        <p class="grad-bio">「<b>ワクワクを創造する起爆剤に</b>」をモットーに、起業家支援・経営支援を軸として、東京・京都・茨城の3拠点で活動中。今の目標は、大学で教鞭をとること、そして47都道府県に友達を作ること。</p>
+        <div class="grad-links">
+          <a href="https://co-omusubi.jp/" target="_blank" rel="noopener">株式会社想結び ↗</a>
+          <a href="https://civic-compass-forum.com/" target="_blank" rel="noopener">Civic Compass Forum ↗</a>
+        </div>
+      </article>
+
+      <!-- 髙橋 瑠依 -->
+      <article class="grad-card">
+        <div class="grad-head">
+          <span class="grad-cohort">9期生</span>
+          <h3 class="grad-name">髙橋 瑠依</h3>
+          <p class="grad-title">合同会社ProfeSsions Edge　業務執行役（AI事業）</p>
+        </div>
+        <p class="grad-bio">「就職活動しないと」と漠然と考える茨城の一学生だったが、栗原との出会いをきっかけに黎明期の生成AIの可能性に気づく。SNSでの発信を続けた結果、在学中から東京のスタートアップ企業でAI関連事業の開発に従事。AI研修の企画設計・講師を務め、<b>フォロワー11万人のAIインフルエンサー</b>としても活動した（現在は非関与）。</p>
+        <p class="grad-bio">現在はチテキウムのAIアライメント事業を率いる。「地方の一学生だった私が、テクノロジーによって人生の選択肢を広げられたように——<b>次は、誰かの可能性を広げる側へ。</b>」</p>
+        <div class="grad-links">
+          <a href="https://chitekium.com/" target="_blank" rel="noopener">チテキウム ↗</a>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CLOSING ===== -->
+<section class="closing">
+  <div class="wrap">
+    <div class="reveal">
+      <span class="eyebrow" style="--ember:#FBE3C4;color:var(--first-light)">Next step</span>
+      <h2>次に進むのは、<br>あなたの番。</h2>
+      <p>志望純度を最も重視する選考。伸びる人、五つの力、募集の流れ——ゼミ選考についてへ。</p>
       <div class="cta-row">
         <a class="btn btn-solid" href="#selection">ゼミ選考について ↗</a>
       </div>
@@ -1176,6 +1238,7 @@
   </div>
 </section>
 </div>
+
 <div class="page" id="page-selection">
 <header class="hero" style="min-height:46svh">
   <canvas id="lorenz-selection"></canvas>
@@ -1472,12 +1535,15 @@ document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
 
 /* ===== SPA hash router ===== */
 (function(){
-  var pages   = ['top','position','program','alumni','selection'];
+  var pages   = ['top','position','program','alumni','careers','selection'];
   var navEl   = document.getElementById('pagenav');
+  var backTop = document.getElementById('backTop');
 
   function show(hash){
     var id = hash.replace('#','') || 'top';
     if(!pages.includes(id)) id = 'top';
+    document.body.setAttribute('data-page', id);
+    if(backTop) backTop.classList.toggle('show', id !== 'top');
     pages.forEach(function(p){
       var el = document.getElementById('page-'+p);
       if(el) el.classList.toggle('active', p === id);

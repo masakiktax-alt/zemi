@@ -3,10 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script>
+/* Apply the intro state before CSS is parsed to prevent a flash on repeat visits. */
+(function(){
+  var hash=location.hash.replace('#','')||'top', visited=false;
+  try{visited=sessionStorage.getItem('ksa-visited')==='1';}catch(e){}
+  if(hash!=='top'||visited){document.documentElement.classList.add('skip-intro');}
+  try{sessionStorage.setItem('ksa-visited','1');}catch(e){}
+})();
+</script>
 <title>栗原ゼミアルムナイ</title>
 <meta name="description" content="栗原正樹ゼミ ／ 栗原ゼミアルムナイ。学びの構造・ゼミの位置付け・教育プログラム・アルムナイ・ゼミ選考。">
 <meta property="og:title" content="栗原ゼミアルムナイ">
-<meta property="og:description" content="正解のない世界で、自分の決断を信じて進む。栗原正樹ゼミ ／ 栗原ゼミアルムナイ。">
+<meta property="og:description" content="正解のない世界で自分の決断を信じて進む。栗原正樹ゼミ。">
 <meta property="og:locale" content="ja_JP">
 <meta name="twitter:card" content="summary">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -73,28 +82,95 @@
   .nav-cta:hover{border-color:var(--gold);color:var(--gold);background:rgba(244,163,64,.06)}
 
   /* ---------- HERO ---------- */
-  .hero{position:relative;min-height:560px;min-height:100svh;display:flex;align-items:center;overflow:hidden}
-  #lorenz{position:absolute;inset:0;width:100%;height:100%;z-index:1}
+  /* ===== OPENING SEQUENCE (闇→蝶飛来→フェードイン) ===== */
+  .hero{position:relative;min-height:max(560px,100vh);display:flex;align-items:center;overflow:hidden}
+  @supports (height:100svh){.hero{min-height:max(560px,100svh)}}
+  /* 闇のカーテン(テキストだけを覆う。蝶canvasは上に出す) */
+  .hero-curtain{
+    position:absolute;inset:0;z-index:4;
+    background:var(--abyss);
+    pointer-events:none;
+    animation:curtainFade 1.2s ease-out 3.2s forwards;
+  }
+  @keyframes curtainFade{to{opacity:0}}
+  /* canvas(蝶)はカーテンの上：闇の中で蝶だけが見える */
+  #lorenz{position:absolute;inset:0;width:100%;height:100%;z-index:5!important}
+  /* ヒーローコンテンツ：カーテンが開いてから登場 */
+  .hero-inner{position:relative;z-index:6;opacity:0;animation:contentIn 1.35s ease-out 4.45s forwards}
+  .scrollcue{opacity:0!important;animation:contentIn 1s ease-out 5.35s forwards!important}
+  @keyframes contentIn{to{opacity:1}}
+  /* navとpagenav：最初は完全に隠し、イントロ後に登場 */
+  nav#nav{opacity:0;animation:contentIn 1s ease-out 4.75s forwards}
+  .pagenav-wrap{opacity:0;animation:contentIn 1s ease-out 4.75s forwards}
+  /* 蝶：小さく遠くから中央へ飛んでくる */
+  .hero canvas#lorenz{
+    transform-origin:center 46%;
+    animation:butterflyApproach 3.6s cubic-bezier(.15,.8,.3,1) forwards;
+  }
+  @keyframes butterflyApproach{
+    0%{transform:scale(.12) translateY(40px);opacity:0}
+    15%{opacity:.3}
+    50%{opacity:.65}
+    100%{transform:scale(1) translateY(0);opacity:1}
+  }
+  /* 再訪・ページ遷移時はスキップ */
+  .skip-intro .hero-curtain{animation:none;opacity:0}
+  .skip-intro .hero-inner{animation:none;opacity:1}
+  .skip-intro .scrollcue{animation:none!important;opacity:.85!important}
+  .skip-intro nav#nav,
+  .skip-intro .pagenav-wrap{animation:none;opacity:1}
+  .skip-intro .hero canvas#lorenz{animation:none;transform:none;opacity:1}
+  @media(prefers-reduced-motion:reduce){
+    .hero-curtain{animation:none!important;opacity:0!important}
+    .hero-inner{animation:none!important;opacity:1!important}
+    .scrollcue{animation:none!important;opacity:.85!important}
+    nav#nav,.pagenav-wrap{animation:none!important;opacity:1!important}
+    .hero canvas#lorenz{animation:none!important;transform:none!important;opacity:1!important}
+  }
+  /* #lorenz は OPENING SEQUENCE 内で定義済み */
   .hero::after{
     /* dawn glow rising from the horizon */
     content:"";position:absolute;left:50%;bottom:-30%;transform:translateX(-50%);
     width:120vw;height:80vh;z-index:2;pointer-events:none;
     background:radial-gradient(ellipse at center,rgba(232,98,60,.22),rgba(244,163,64,.08) 38%,transparent 66%);
   }
-  .hero-inner{position:relative;z-index:3;padding:120px 0 90px}
+  .hero-inner{width:100%;min-width:0;align-self:stretch;box-sizing:border-box;padding:110px 0 60px} /* z-indexとopacityはOPENING SEQUENCEで定義 */
+  .hero .eyebrow{margin-bottom:.2em}
   .hero h1{
     font-family:"Zen Old Mincho",serif;font-weight:900;
-    font-size:clamp(2.5rem,6.6vw,5rem);line-height:1.28;letter-spacing:.02em;
-    margin:.5em 0 .7em;
+    font-size:clamp(2.8rem,8vw,5.8rem);line-height:1.15;letter-spacing:.06em;
+    margin:0 0 .15em;
   }
   .hero h1 .glow{
     background:linear-gradient(100deg,var(--first-light),var(--gold) 55%,var(--ember));
     -webkit-background-clip:text;background-clip:text;color:transparent;
   }
+  .hero-sub{
+    font-family:"Zen Old Mincho",serif;font-weight:600;
+    font-size:clamp(1rem,2vw,1.25rem);letter-spacing:.06em;line-height:1.8;
+    color:var(--mist);margin:0 0 2em;
+    border-left:2px solid var(--ember);padding-left:1em;
+  }
+  .hero-sub em{font-style:normal;color:var(--gold);font-weight:700}
+  .hero-split{
+    display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center;
+  }
   .hero p.lead{
-    max-width:42ch;color:#D8DCEC;font-size:clamp(1.04rem,1.8vw,1.24rem);line-height:2.05;
+    max-width:none;color:rgba(216,220,236,.8);
+    font-size:clamp(.92rem,1.5vw,1.08rem);line-height:2.15;
   }
   .hero p.lead br{display:block}
+  .hero-right{
+    display:flex;justify-content:center;align-items:center;
+    position:relative;min-height:240px;
+  }
+  .hero-right .compass-stage{width:200px;margin:0}
+  .hero-right .compass{width:200px;height:200px}
+  @media(max-width:780px){
+    .hero-split{grid-template-columns:1fr;gap:28px}
+    .hero-right{justify-content:flex-start;min-height:220px}
+  }
+  .compass-sec{display:none}
   .scrollcue{position:absolute;bottom:30px;left:50%;transform:translateX(-50%);z-index:3;
     font-family:"Fraunces",serif;font-style:italic;font-size:.72rem;letter-spacing:.2em;color:var(--mist);
     display:flex;flex-direction:column;align-items:center;gap:8px;opacity:.85}
@@ -181,9 +257,12 @@
   .chip .big{font-family:"Zen Old Mincho",serif;font-weight:700;font-size:1.5rem;margin-top:.35em;line-height:1.4}
   .chip .big small{font-size:.9rem;color:var(--mist);font-weight:400;font-family:"Zen Kaku Gothic New",sans-serif}
   .purity{font-family:"Zen Old Mincho",serif;font-weight:700;font-size:clamp(1.3rem,2.6vw,1.9rem);
-    line-height:1.7;text-align:left;margin:10px 0 40px;max-width:none}
+    line-height:1.7;text-align:left;margin:10px 0 12px;max-width:none}
   .purity .mult{color:var(--ember)}
-  .presemi{text-align:center;color:var(--mist);font-size:.95rem;margin:-34px auto 50px;max-width:48ch}
+  .purity-note{max-width:68ch;margin:0 0 40px;color:var(--mist);font-size:.98rem;line-height:1.9}
+  .sel .sec-head{max-width:none}
+  .sel .sec-head h2{font-size:clamp(2rem,4.2vw,3.2rem);white-space:nowrap}
+  .presemi{text-align:left;color:var(--mist);font-size:.95rem;line-height:1.9;margin:28px 0 50px;max-width:none;padding-left:16px;border-left:2px solid var(--gold)}
   .presemi b{color:var(--first-light);font-weight:500}
 
   /* attention accordion */
@@ -203,6 +282,22 @@
   .ach-body p{color:var(--mist);font-size:.94rem;line-height:1.95;margin-top:1.1em}
   .ach-body p:first-child{margin-top:0}
   .ach-body b{color:var(--first-light);font-weight:500}
+  .selection-evidence-intro{margin:4px 0 20px!important;max-width:760px}
+  .selection-evidence{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+  .evidence-card{padding:22px 20px 24px;border:1px solid var(--line);border-radius:14px;
+    background:rgba(8,12,25,.42)}
+  .evidence-card:last-child{background:linear-gradient(155deg,rgba(244,163,64,.09),rgba(8,12,25,.42))}
+  .evidence-kicker{display:block;margin-bottom:12px;font-family:"Fraunces",serif;font-style:italic;
+    color:var(--gold);font-size:.7rem;letter-spacing:.13em}
+  .evidence-card h5{margin:0 0 12px!important;color:var(--first-light);font-size:1.05rem;line-height:1.55}
+  .evidence-card p{margin:0!important;font-size:.86rem;line-height:1.85}
+  .evidence-points{display:grid;gap:8px;margin:0 0 14px;padding:0;list-style:none}
+  .evidence-points li{display:flex;gap:8px;color:var(--first-light);font-size:.88rem;line-height:1.6}
+  .evidence-points li::before{content:"—";color:var(--gold)}
+  @media(max-width:780px){
+    .selection-evidence{grid-template-columns:1fr}
+    .evidence-card{padding:20px}
+  }
   /* neutral disclosure (program details) */
   .det{max-width:none;margin:18px 0 0;background:var(--abyss)}
   .det + .det{margin-top:14px}
@@ -213,6 +308,14 @@
   .ach-body h5:first-child{margin-top:.2em}
   .community .det{background:var(--night)}
 
+  .selection-schedule-head{display:flex;align-items:center;gap:16px;margin:68px 0 24px;
+    font-family:"Zen Old Mincho",serif;font-size:clamp(1.55rem,3vw,2.35rem);font-weight:700;
+    color:var(--first-light);letter-spacing:.02em}
+  .selection-schedule-head::before{content:"";width:32px;height:1px;background:var(--ember);flex:0 0 auto}
+  .schedule-notes{margin:28px 0 0;padding:18px 22px;border-left:2px solid var(--gold);
+    background:rgba(244,163,64,.035)}
+  .schedule-notes p{color:var(--mist);font-size:.9rem;line-height:1.85}
+  .schedule-notes p + p{margin-top:.55em}
   .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
   .step{border:1px solid var(--line);border-radius:18px;padding:34px 28px;background:var(--abyss);position:relative}
   .step .sn{font-family:"Fraunces",serif;font-style:italic;color:var(--gold);font-size:.78rem;letter-spacing:.16em}
@@ -235,6 +338,58 @@
   .btn-solid:hover{transform:translateY(-2px);box-shadow:0 14px 40px rgba(11,14,26,.4)}
   .btn-ghost{border-color:rgba(11,14,26,.5);color:var(--abyss)}
   .btn-ghost:hover{background:rgba(11,14,26,.08)}
+  .btn-back{background:transparent;color:var(--first-light);border-color:rgba(251,227,196,.28)}
+  .btn-back:hover{transform:translateY(-2px);border-color:rgba(251,227,196,.6);background:rgba(251,227,196,.06)}
+  .program-leader .sec-head{max-width:none}
+  .program-leader .sec-head h2{font-size:clamp(2rem,4vw,3.25rem);white-space:nowrap}
+  .program-next{background:linear-gradient(145deg,#111425 0%,#21182a 58%,#5f302d 100%);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .program-next::before{width:90vw;height:55vh;opacity:.55}
+  .program-next .wrap{max-width:900px}
+  .program-next .reveal{padding:54px clamp(24px,6vw,68px);border:1px solid rgba(251,227,196,.16);border-radius:24px;background:rgba(11,14,26,.18);box-shadow:0 24px 80px rgba(11,14,26,.2)}
+  .program-next h2{font-size:clamp(1.8rem,3.8vw,2.75rem);line-height:1.45;letter-spacing:.02em;margin:.35em 0 .55em}
+  .program-next p{font-size:.98rem;line-height:1.9;margin-bottom:1.8em}
+  .program-next .btn{padding:.85em 1.9em;font-size:.88rem;border:1px solid rgba(251,227,196,.16)}
+  .shuhari{display:grid;grid-template-columns:repeat(3,1fr);max-width:680px;margin:26px auto 30px;border:1px solid rgba(251,227,196,.16);border-radius:16px;overflow:hidden}
+  .shuhari-step{display:grid;gap:7px;padding:20px 14px;background:rgba(11,14,26,.16)}
+  .shuhari-step + .shuhari-step{border-left:1px solid rgba(251,227,196,.16)}
+  .shuhari-step b{font-family:"Zen Old Mincho",serif;font-size:clamp(1.8rem,3vw,2.5rem);font-weight:700;line-height:1;color:var(--first-light)}
+  .shuhari-step span{font-size:.82rem;line-height:1.6;color:rgba(251,227,196,.72)}
+  .shuhari-step.is-next{background:linear-gradient(150deg,rgba(232,98,60,.18),rgba(244,163,64,.1))}
+  .shuhari-step.is-next b,.shuhari-step.is-next span{color:var(--gold)}
+  .shuhari-concept{max-width:54ch!important;margin:.2em auto 1.5em!important;text-align:left!important;
+    color:rgba(251,227,196,.82)!important;font-size:.92rem!important;line-height:1.9!important}
+  .alumni-next .next-stage-title{display:grid;gap:.16em}
+  .alumni-next .next-stage-title .stage-symbol{color:var(--gold);font-family:"Fraunces","Zen Old Mincho",serif;font-size:.62em;font-weight:500;letter-spacing:.1em}
+  .alumni-next .next-stage-title .stage-copy{font-size:.88em;line-height:1.5}
+  .alumni-next p{max-width:48ch;text-align:left}
+  .position-next{padding:64px 0;background:var(--abyss);border-bottom:0}
+  .position-next::before{display:none}
+  .position-next .reveal{padding:0;border:0;border-radius:0;background:none;box-shadow:none}
+  .selection-next h2{max-width:34ch;margin:.35em auto .55em;font-size:clamp(1.55rem,2.8vw,2.15rem);line-height:1.55;
+    word-break:keep-all;overflow-wrap:normal}
+  .selection-next p{max-width:58ch;text-align:left}
+  .careers-next p{max-width:46ch;text-align:left}
+  /* top hero: keep the visual weight in the upper two-thirds of the viewport */
+  #page-top .hero{align-items:flex-start}
+  #page-top .hero-inner{padding:clamp(108px,14vh,148px) 0 54px}
+  #page-top .hero h1{font-size:clamp(2.75rem,7vw,5.15rem);letter-spacing:.045em}
+  #page-top .hero-sub{margin-bottom:1.35em}
+  #page-top .hero-split{grid-template-columns:minmax(0,1.08fr) minmax(240px,.92fr);gap:56px}
+  #page-top .hero-right{transform:translateY(10px)}
+  .top-position-link{display:flex;justify-content:flex-start;margin-top:48px}
+  .top-position-link .btn{min-width:0;padding:.82em 1.45em;font-size:.8rem}
+  @media(max-width:720px){
+    #page-top .hero-inner{padding:96px 0 52px}
+    #page-top .hero h1{font-size:clamp(2.45rem,12vw,4rem)}
+    #page-top .hero-split{grid-template-columns:1fr;gap:24px}
+    #page-top .hero-right{transform:none}
+    .top-position-link{margin-top:20px}
+    .program-leader .sec-head h2{white-space:normal}
+    .program-next .reveal{padding:40px 22px;border-radius:18px}
+    .shuhari{grid-template-columns:1fr;max-width:340px}
+    .shuhari-step{grid-template-columns:42px 1fr;align-items:center;text-align:left}
+    .shuhari-step + .shuhari-step{border-left:0;border-top:1px solid rgba(251,227,196,.16)}
+  }
 
   footer{background:var(--abyss);padding:46px 0;text-align:center;color:var(--mist);font-size:.82rem;border-top:1px solid var(--line)}
   footer .mincho{color:var(--first-light);font-size:.95rem;letter-spacing:.08em}
@@ -251,6 +406,7 @@
   @media(max-width:520px){
     .pow-grid{grid-template-columns:1fr}
     nav .brand small{display:none}
+    .sel .sec-head h2{white-space:normal}
   }
   @media(prefers-reduced-motion:reduce){
     *{animation:none!important;scroll-behavior:auto}
@@ -285,6 +441,22 @@
   }
   .pos-callout p{color:var(--first-light);font-size:1.02rem;line-height:2.05;max-width:none}
   .pos-callout b{color:var(--gold)}
+  .seminar-summary{margin-top:0;margin-bottom:2.2em;display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:30px}
+  .summary-column + .summary-column{border-left:1px solid var(--line);padding-left:30px}
+  .tensions .sec-head{max-width:none}
+  .dream-note-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:28px;max-width:none}
+  .dream-note-card + .dream-note-card{border-left:1px solid var(--line);padding-left:28px}
+  .wwh .sec-head{max-width:none}
+  .wwh-title{display:flex;flex-wrap:wrap;column-gap:.24em}
+  .wwh-title span{white-space:nowrap}
+  .wwh-axis{display:inline-block;margin-left:.75em;padding:.22em .75em;border:1px solid rgba(244,163,64,.5);border-radius:999px;background:linear-gradient(110deg,rgba(232,98,60,.12),rgba(244,163,64,.08));color:var(--gold);font-family:"Zen Kaku Gothic New",sans-serif;font-size:.58em;font-weight:700;letter-spacing:.08em;vertical-align:.16em;white-space:nowrap}
+  @media(max-width:780px){
+    .seminar-summary,.dream-note-grid{grid-template-columns:1fr}
+    .summary-column + .summary-column,.dream-note-card + .dream-note-card{border-left:0;border-top:1px solid var(--line);padding-left:0;padding-top:24px}
+    .wwh-title{display:block}
+    .wwh-title span{display:block}
+    .wwh-axis{display:table;margin:.45em 0 0;padding:.25em .75em}
+  }
 
   /* ---------- JOURNEY (学びの構造 3段) ---------- */
   .journey-intro{margin-bottom:60px;max-width:64ch;color:var(--mist);font-size:1.02rem;line-height:2}
@@ -580,11 +752,109 @@
     .backtop span{display:none}
   }
 
+/* ---------- COMPLETE MOBILE LAYOUT ---------- */
+.mobile-page-hero{display:none}
+@media(max-width:780px){
+  html{font-size:15px}
+  body{overflow-x:hidden}
+  .wrap{width:calc(100% - 36px);max-width:1120px;padding-left:0;padding-right:0}
+  nav#nav{height:72px;padding:0 18px}
+  nav#nav .brand{font-size:1rem}
+  nav#nav .nav-teacher{padding:.65em 1em;font-size:.72rem;white-space:nowrap}
+  .pagenav-wrap{display:none}
+
+  #page-top .hero{min-height:100svh;align-items:flex-start}
+  #page-top .hero-inner{padding:96px 0 48px}
+  #page-top .hero h1{font-size:clamp(2.35rem,12vw,3.7rem);line-height:1.18;letter-spacing:.025em}
+  #page-top .hero-sub{font-size:.96rem;line-height:1.7;margin-bottom:1.2em}
+  #page-top .hero-split{grid-template-columns:1fr;gap:24px}
+  #page-top .hero p.lead{font-size:.88rem;line-height:1.95}
+  #page-top .hero-right{justify-content:center;min-height:215px;transform:none}
+  #page-top .hero-right .compass-stage,#page-top .hero-right .compass{width:176px;height:176px}
+  .top-position-link{margin-top:20px}
+  .scrollcue{display:none}
+
+  .page:not(#page-top) > header.hero{display:none!important}
+  .mobile-page-hero{display:block;position:relative;min-height:390px;padding:118px 0 68px;
+    background:linear-gradient(155deg,#0b0e1a 0%,#111425 58%,#231922 100%);border-bottom:1px solid var(--line);overflow:hidden}
+  .mobile-page-hero::after{content:"";position:absolute;inset:auto -25% -42% 5%;height:70%;
+    background:radial-gradient(ellipse,rgba(232,98,60,.16),transparent 68%);pointer-events:none}
+  .mobile-page-hero .wrap{position:relative;z-index:1}
+  .mobile-page-hero .eyebrow{display:block;margin-bottom:18px;color:var(--gold);line-height:1.6}
+  .mobile-page-hero h1{margin:0;font-family:"Zen Old Mincho",serif;font-size:clamp(2.05rem,10vw,2.9rem);
+    font-weight:900;line-height:1.38;letter-spacing:.025em;color:var(--first-light);text-align:left}
+  .mobile-page-hero h1 .glow{background:linear-gradient(100deg,var(--first-light),var(--gold) 55%,var(--ember));
+    -webkit-background-clip:text;background-clip:text;color:transparent}
+  .mobile-page-hero p{max-width:32em;margin:22px 0 0;color:var(--mist);font-size:.92rem;line-height:1.9;text-align:left}
+  .page:not(#page-top) .hero{min-height:520px!important;height:auto}
+  .page:not(#page-top) .hero-inner{width:calc(100% - 36px);max-width:1120px;margin-left:auto;margin-right:auto;
+    min-width:calc(100% - 36px);align-self:stretch;padding:106px 0 62px!important}
+  .page:not(#page-top) .hero h1{font-size:clamp(2rem,10vw,3rem)!important;line-height:1.35;letter-spacing:.025em;
+    width:100%;max-width:100%;text-align:left;white-space:normal!important;word-break:normal;overflow-wrap:anywhere;line-break:strict}
+  .page:not(#page-top) .hero .eyebrow,.page:not(#page-top) .hero .lead{width:100%;max-width:100%;text-align:left}
+  .page:not(#page-top) .hero .lead{font-size:.94rem;line-height:1.9;max-width:100%}
+
+  .page section{padding:72px 0}
+  .sec-head{margin-bottom:38px}
+  .sec-head h2,.closing h2{font-size:clamp(1.8rem,9vw,2.55rem)!important;line-height:1.45!important;
+    letter-spacing:.015em;overflow-wrap:anywhere;line-break:strict}
+  .sec-head .sub{font-size:.92rem;line-height:1.85}
+  .eyebrow{font-size:.72rem;letter-spacing:.13em}
+
+  .seminar-summary,.dream-note-grid,.fit-grid,.grad-grid,.selection-evidence,
+  .steps,.journey,.pow-grid,.t-grid,.shuhari{grid-template-columns:1fr!important}
+  .seminar-summary{gap:18px;padding:24px 20px}
+  .journey{gap:16px}
+  .journey::before{display:none}
+  .stage{padding:28px 22px}
+  .stage .where{font-size:1.3rem}
+  .pow-grid,.t-grid,.shuhari{gap:0}
+  .pow,.t-card,.shuhari-step{border-left:0!important;border-top:1px solid var(--line)}
+  .pow:first-child,.t-card:first-child,.shuhari-step:first-child{border-top:0}
+  .pow{min-height:auto;padding:28px 24px}
+  .wwh-row{grid-template-columns:1fr;gap:10px;padding:34px 0}
+  .wwh-key{font-size:2.4rem}
+  .wwh-q{font-size:1.25rem;display:flex;flex-wrap:wrap;gap:.35em .7em}
+  .wwh-a{font-size:.92rem;line-height:1.9}
+
+  .pos-block,.pos-callout,.os-body{max-width:100%}
+  .ach{margin:0 0 42px;border-radius:14px}
+  .ach summary{padding:17px 16px;gap:10px;align-items:flex-start}
+  .ach-label{min-width:0;font-size:.9rem;line-height:1.6;overflow-wrap:anywhere}
+  .ach-tag{flex:0 0 auto}
+  .ach-ic{margin-left:auto;flex:0 0 auto}
+  .ach-body{padding:4px 16px 20px}
+  .evidence-card{padding:20px 18px}
+  .sel-meta{grid-template-columns:1fr!important;gap:14px}
+  .chip,.step{padding:26px 22px}
+  .presemi,.schedule-notes{padding:16px 18px}
+
+  .closing.program-next .reveal,.closing .reveal{padding:38px 20px;border-radius:18px}
+  .closing p,.selection-next p,.careers-next p,.alumni-next p{max-width:100%;font-size:.9rem;line-height:1.85}
+  .cta-row{flex-direction:column;align-items:center;gap:12px}
+  .cta-row .btn{width:min(100%,320px);text-align:center;padding:.9em 1.35em}
+  .selection-next h2{word-break:normal;overflow-wrap:anywhere}
+  footer#site-footer{padding:34px 18px}
+  .backtop{right:14px;bottom:14px;transform:scale(.88);transform-origin:right bottom}
+}
+
+@media(max-width:420px){
+  .wrap{width:calc(100% - 28px)}
+  .page:not(#page-top) .hero-inner{width:calc(100% - 28px);min-width:calc(100% - 28px)}
+  nav#nav{padding:0 14px}
+  #page-top .hero-inner{padding-top:88px}
+  #page-top .hero h1{font-size:clamp(2.15rem,11.5vw,3rem)}
+  .page:not(#page-top) .hero h1{font-size:clamp(1.85rem,9.5vw,2.55rem)!important}
+  .sec-head h2,.closing h2{font-size:clamp(1.65rem,8.5vw,2.2rem)!important}
+  .hero .eyebrow{max-width:90%;line-height:1.6}
+  .mobile-page-hero{min-height:360px;padding:104px 0 58px}
+  .mobile-page-hero h1{font-size:clamp(1.95rem,9.6vw,2.55rem)}
+}
 </style>
 </head>
 <body>
 <nav id="nav">
-  <a class="brand" href="#top" style="text-decoration:none;color:inherit">栗原ゼミアルムナイ</a>
+  <a class="brand" href="#top" style="text-decoration:none;color:inherit">TOP</a>
   <a class="nav-cta" href="https://masakikurihara.com" target="_blank" rel="noopener" style="font-size:.8rem;letter-spacing:.12em;padding:.55em 1.3em;border:1px solid rgba(251,227,196,.14);border-radius:40px;color:var(--first-light);transition:.3s;">教員サイト ↗</a>
 </nav>
 <div class="pagenav-wrap" id="pagenav">
@@ -600,180 +870,167 @@
 <div class="page active" id="page-top">
 <header class="hero">
   <canvas id="lorenz"></canvas>
+  <div class="hero-curtain"></div>
   <div class="hero-inner wrap">
-    <span class="eyebrow">栗原ゼミアルムナイ</span>
-    <h1>正解のない世界で、<br><span class="glow">自分の決断</span>を信じて進む。</h1>
-    <p class="lead">学問という翼を。人類の叡智という武器を。<br>世界を、自分の決断で生き抜くための羅針盤を——ここで。</p>
+    <!-- 上段：タイトル -->
+    <span class="eyebrow">Kurihara Seminar Community</span>
+    <h1><span class="glow">栗原ゼミアルムナイ</span></h1>
+    <p class="hero-sub">正解のない世界で、自分の<em>決断</em>を信じて進む力を得る</p>
+
+    <!-- 下段：リード文（左）＋ 羅針盤（右） -->
+    <div class="hero-split">
+      <div class="hero-left">
+        <p class="lead">学問という翼を。<br>人類の叡智という武器を。<br>世界を自分の決断で生き抜くための羅針盤を——ここで。</p>
+        <div class="top-position-link">
+          <a class="btn btn-solid" href="#position">ゼミの位置づけに進む ↗</a>
+        </div>
+      </div>
+      <div class="hero-right">
+        <div class="compass-stage" id="eggnav">
+          <button class="compass" id="eggCore" aria-expanded="false" aria-controls="eggnav" type="button" aria-label="羅針盤をひらいて行き先を選ぶ">
+            <span class="aura a1"></span>
+            <span class="aura a2"></span>
+            <span class="aura a3"></span>
+            <svg class="compass-face" viewBox="0 0 200 200" aria-hidden="true">
+              <defs>
+                <radialGradient id="cg" cx="38%" cy="32%" r="75%">
+                  <stop offset="0%" stop-color="#242a45"/>
+                  <stop offset="55%" stop-color="#141a2e"/>
+                  <stop offset="100%" stop-color="#0b0e1a"/>
+                </radialGradient>
+                <radialGradient id="cglow" cx="50%" cy="50%" r="50%">
+                  <stop offset="0%" stop-color="#F4A340" stop-opacity=".28"/>
+                  <stop offset="70%" stop-color="#E8623C" stop-opacity=".06"/>
+                  <stop offset="100%" stop-color="#0b0e1a" stop-opacity="0"/>
+                </radialGradient>
+                <filter id="softglow" x="-40%" y="-40%" width="180%" height="180%">
+                  <feGaussianBlur stdDeviation="2.2" result="b"/>
+                  <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+                </filter>
+              </defs>
+              <circle class="innerglow" cx="100" cy="100" r="90" fill="url(#cglow)"/>
+              <circle cx="100" cy="100" r="96" fill="url(#cg)" stroke="#F4A340" stroke-opacity=".55" stroke-width="1"/>
+              <g class="rune-ring"><circle cx="100" cy="100" r="88" fill="none" stroke="#F4A340" stroke-opacity=".28" stroke-width="1" stroke-dasharray="1.5 7"/></g>
+              <g class="rune-ring rev"><circle cx="100" cy="100" r="70" fill="none" stroke="#FBE3C4" stroke-opacity=".16" stroke-width="1" stroke-dasharray="0.8 10"/></g>
+              <circle cx="100" cy="100" r="82" fill="none" stroke="#F4A340" stroke-opacity=".22" stroke-width="1"/>
+              <g class="ticks" stroke="#F4A340" stroke-opacity=".5">
+                <line x1="100" y1="8" x2="100" y2="20"/><line x1="100" y1="180" x2="100" y2="192"/>
+                <line x1="8" y1="100" x2="20" y2="100"/><line x1="180" y1="100" x2="192" y2="100"/>
+                <line x1="41" y1="41" x2="49" y2="49"/><line x1="159" y1="41" x2="151" y2="49"/>
+                <line x1="41" y1="159" x2="49" y2="151"/><line x1="159" y1="159" x2="151" y2="151"/>
+              </g>
+              <text x="100" y="30" class="cardinal n" text-anchor="middle">N</text>
+              <text x="100" y="182" class="cardinal" text-anchor="middle">S</text>
+              <text x="16" y="105" class="cardinal" text-anchor="middle">W</text>
+              <text x="184" y="105" class="cardinal" text-anchor="middle">E</text>
+              <g class="needle" filter="url(#softglow)">
+                <polygon points="100,26 108,100 100,116 92,100" fill="#E8623C"/>
+                <polygon points="100,174 108,100 100,84 92,100" fill="#F4A340" fill-opacity=".55"/>
+                <circle cx="100" cy="100" r="6" fill="#FBE3C4"/>
+                <circle class="needle-core" cx="100" cy="100" r="3" fill="#fff"/>
+              </g>
+            </svg>
+            <span class="compass-hint">ひらく</span>
+            <span class="ray" style="--dir:0"><a href="#position"><span>ゼミの位置付け</span></a></span>
+            <span class="ray" style="--dir:1"><a href="#program"><span>教育プログラムの特徴</span></a></span>
+            <span class="ray" style="--dir:2"><a href="#alumni"><span>アルムナイ</span></a></span>
+            <span class="ray" style="--dir:3"><a href="#careers"><span>卒業後の進路</span></a></span>
+            <span class="ray" style="--dir:4"><a href="#selection"><span>ゼミ選考について</span></a></span>
+            <span class="ray" style="--dir:5"><a href="https://masakikurihara.com" target="_blank" rel="noopener"><span>指導教員を知る ↗</span></a></span>
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
   <div class="scrollcue"><span>scroll</span></div>
 </header>
-
-<!-- ===== COMPASS NAV (羅針盤) ===== -->
-<section class="compass-sec">
-  <div class="wrap">
-    <div class="compass-stage" id="eggnav">
-      <button class="compass" id="eggCore" aria-expanded="false" aria-controls="eggnav" type="button" aria-label="羅針盤をひらいて行き先を選ぶ">
-        <!-- 神秘のオーラ（開くと拡がる同心円） -->
-        <span class="aura a1"></span>
-        <span class="aura a2"></span>
-        <span class="aura a3"></span>
-        <!-- 盤面 -->
-        <svg class="compass-face" viewBox="0 0 200 200" aria-hidden="true">
-          <defs>
-            <radialGradient id="cg" cx="38%" cy="32%" r="75%">
-              <stop offset="0%" stop-color="#242a45"/>
-              <stop offset="55%" stop-color="#141a2e"/>
-              <stop offset="100%" stop-color="#0b0e1a"/>
-            </radialGradient>
-            <radialGradient id="cglow" cx="50%" cy="50%" r="50%">
-              <stop offset="0%" stop-color="#F4A340" stop-opacity=".28"/>
-              <stop offset="70%" stop-color="#E8623C" stop-opacity=".06"/>
-              <stop offset="100%" stop-color="#0b0e1a" stop-opacity="0"/>
-            </radialGradient>
-            <filter id="softglow" x="-40%" y="-40%" width="180%" height="180%">
-              <feGaussianBlur stdDeviation="2.2" result="b"/>
-              <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
-            </filter>
-          </defs>
-
-          <!-- 内なる光 -->
-          <circle class="innerglow" cx="100" cy="100" r="90" fill="url(#cglow)"/>
-          <circle cx="100" cy="100" r="96" fill="url(#cg)" stroke="#F4A340" stroke-opacity=".55" stroke-width="1"/>
-
-          <!-- 回転する外周ルーン環 -->
-          <g class="rune-ring">
-            <circle cx="100" cy="100" r="88" fill="none" stroke="#F4A340" stroke-opacity=".28" stroke-width="1" stroke-dasharray="1.5 7"/>
-          </g>
-          <!-- 逆回転する内環 -->
-          <g class="rune-ring rev">
-            <circle cx="100" cy="100" r="70" fill="none" stroke="#FBE3C4" stroke-opacity=".16" stroke-width="1" stroke-dasharray="0.8 10"/>
-          </g>
-          <circle cx="100" cy="100" r="82" fill="none" stroke="#F4A340" stroke-opacity=".22" stroke-width="1"/>
-
-          <!-- 主目盛り -->
-          <g class="ticks" stroke="#F4A340" stroke-opacity=".5">
-            <line x1="100" y1="8"  x2="100" y2="20"/>
-            <line x1="100" y1="180" x2="100" y2="192"/>
-            <line x1="8"  y1="100" x2="20" y2="100"/>
-            <line x1="180" y1="100" x2="192" y2="100"/>
-            <line x1="41" y1="41" x2="49" y2="49"/>
-            <line x1="159" y1="41" x2="151" y2="49"/>
-            <line x1="41" y1="159" x2="49" y2="151"/>
-            <line x1="159" y1="159" x2="151" y2="151"/>
-          </g>
-          <!-- 方位記号 -->
-          <text x="100" y="30" class="cardinal n" text-anchor="middle">N</text>
-          <text x="100" y="182" class="cardinal" text-anchor="middle">S</text>
-          <text x="16" y="105" class="cardinal" text-anchor="middle">W</text>
-          <text x="184" y="105" class="cardinal" text-anchor="middle">E</text>
-          <!-- 針 -->
-          <g class="needle" filter="url(#softglow)">
-            <polygon points="100,26 108,100 100,116 92,100" fill="#E8623C"/>
-            <polygon points="100,174 108,100 100,84 92,100" fill="#F4A340" fill-opacity=".55"/>
-            <circle cx="100" cy="100" r="6" fill="#FBE3C4"/>
-            <circle class="needle-core" cx="100" cy="100" r="3" fill="#fff"/>
-          </g>
-        </svg>
-        <span class="compass-hint">ひらく</span>
-
-        <!-- 方位の先に現れるリンク -->
-        <span class="ray" style="--dir:0"><a href="#position"><span>ゼミの位置付け</span></a></span>
-        <span class="ray" style="--dir:1"><a href="#program"><span>教育プログラムの特徴</span></a></span>
-        <span class="ray" style="--dir:2"><a href="#alumni"><span>アルムナイ</span></a></span>
-        <span class="ray" style="--dir:3"><a href="#careers"><span>卒業後の進路</span></a></span>
-        <span class="ray" style="--dir:4"><a href="#selection"><span>ゼミ選考について</span></a></span>
-        <span class="ray" style="--dir:5"><a href="https://masakikurihara.com" target="_blank" rel="noopener"><span>指導教員を知る ↗</span></a></span>
-      </button>
-    </div>
-  </div>
-</section>
-
-<!-- ===== JOURNEY (学びの構造) ===== -->
-<section>
-  <div class="wrap">
-    <div class="sec-head reveal">
-      <span class="eyebrow">Structure of Learning</span>
-      <h2>学びの構造。</h2>
-    </div>
-    <p class="journey-intro reveal">栗原ゼミでの学びは、大学に入ってから始まる<b>4年間で完結する話ではありません</b>。1〜2年で考える力の基礎を耕し、3〜4年でゼミに打ち込み、卒業後も学び続ける。長い時間軸の中で、ゼミは点ではなく<b>線</b>として機能します。</p>
-
-    <div class="journey reveal">
-      <div class="stage">
-        <span class="dot"></span>
-        <span class="when">YEAR 1 ─ 2</span>
-        <span class="where">大学1〜2年</span>
-        <div class="lines">
-          <p class="line"><b>教養科目</b>で、考える力の基礎を養う。</p>
-          <p class="line"><b>専門科目</b>で、問題解決力のパズルのピースを集める。</p>
-        </div>
-      </div>
-
-      <a class="stage now" href="#program" data-popup="学びを知る">
-        <span class="dot"></span>
-        <span class="when">YEAR 3 ─ 4</span>
-        <span class="where">ゼミでの学び</span>
-        <div class="lines">
-          <p class="line">集めたピースを<b>つなぎ、使う</b>。</p>
-          <p class="line"><b>問題解決力と、課題設定力</b>の基礎をつくる。</p>
-        </div>
-      </a>
-
-      <a class="stage" href="#alumni" data-popup="アルムナイを知る">
-        <span class="dot"></span>
-        <span class="when">AFTER</span>
-        <span class="where">卒業後</span>
-        <div class="lines">
-          <p class="line"><b>継続的に学べる場</b>（栗原ゼミアルムナイ）。</p>
-          <p class="line">志を共有する仲間と、<b>チャレンジできる環境</b>を創る。</p>
-        </div>
-      </a>
-
-      <a class="stage grad-cta" href="#careers" data-popup="進路を知る">
-        <span class="dot"></span>
-        <span class="when">STORIES</span>
-        <span class="where">卒業後の活躍</span>
-        <div class="lines">
-          <p class="line"><b>起業・独立</b>など、卒業生の実例。</p>
-          <p class="line">学びを、<b>自分の仕事</b>に変えた先輩たち。</p>
-        </div>
-      </a>
-    </div>
-  </div>
-</section>
-
-
-
-<!-- ===== CLOSING ===== -->
-<section class="closing">
-  <div class="wrap">
-    <div class="reveal">
-      <span class="eyebrow" style="--ember:#FBE3C4;color:var(--first-light)">At first light</span>
-      <h2>誰かが決めてくれるのを、<br>待たない人へ。</h2>
-      <p>リーダーになる必要はありません。けれど、必要な時にリーダーシップを発揮できる人になってほしい。この考え方に共感できる人と、一緒に学びたいと思っています。</p>
-      <div class="cta-row">
-        <a class="btn btn-solid" href="#position">ゼミの位置付けへ ↗</a>
-      </div>
-    </div>
-  </div>
-</section>
 </div>
 <div class="page" id="page-position">
 <header class="hero" style="min-height:60svh">
   <canvas id="lorenz-position"></canvas>
   <div class="hero-inner wrap" style="padding:80px 0 60px">
     <span class="eyebrow">Position &nbsp;|&nbsp; ゼミの位置付け</span>
-    <h1 style="font-size:clamp(2.1rem,5.4vw,4rem)">「学問」の本来の意味から、<br><span class="glow">考える</span>。</h1>
-    <p class="lead">大学とは何か。ゼミとは何か。<br>栗原ゼミは、その問いから始まる。</p>
+    <h1 style="font-size:clamp(2.1rem,5.4vw,4rem)">大学とは何か。<br><span class="glow">ゼミとは何か。</span></h1>
+    <p class="lead">大学の意味を問い直す。<br>栗原ゼミは、大学教育をイノベートする。</p>
   </div>
 </header>
 
-<!-- ===== TENSIONS ===== -->
+<header class="mobile-page-hero">
+  <div class="wrap">
+    <span class="eyebrow">Position &nbsp;|&nbsp; ゼミの位置づけ</span>
+    <h1>大学とは何か。<br><span class="glow">ゼミとは何か。</span></h1>
+    <p>大学の意味を問い直す。<br>栗原ゼミは、大学教育をイノベートする。</p>
+  </div>
+</header>
+
+<!-- ===== UNIVERSITY EDUCATION ===== -->
+<section class="position">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="eyebrow">University education</span>
+      <h2>大学とは何か</h2>
+    </div>
+    <div class="reveal">      <div class="pos-block">
+        <h4>大学と学問の本来の意味</h4>
+        <p>本来、大学は研究者の卵を育てるための「学問」をする場所でした。学問とは、<b>「自ら問うて学ぶ」</b>主体的な学びを意味します。だからこそ大学生は、生徒とは区別して、主体的に学ぶ存在として「学生」と呼ばれてきました。この「自ら問うて学ぶ」という学問の価値は、社会や技術がどれほど変化しても、今なお変わりません。むしろ、正解が一つに定まらない時代だからこそ、その重要性は高まっています。</p>
+      </div>
+
+      <div class="pos-block">
+        <h4>専門分化と学問の構造</h4>
+        <p>学生は専門分野に分かれ、自分が目指す分野の先人の叡智の継承を目的に学びます。「科学」が「分けた科ごとの学」と言われるように、目の前の現象全体をそのまま理解するのは難しく、現象を分解して「狭く・深く」掘り下げることで世界の謎を解き明かそうとしてきました。会計学もまた、社会科学の一領域として情報提供の在り方を追及しています。</p>
+      </div>
+
+      <div class="pos-block">
+        <h4>大学教育の限界と期待ギャップ</h4>
+        <p>大学の学びは、それぞれの専門分野が「深く・狭く」独立して成り立っているため、他分野の知識とどう関連し、全体としてどう考えるかという総合的な学びの機会は多くありません。また、大学教育は研究者の卵を育てる制度として、基本的に「過去に明らかになったこと」の継承を中心に組み立てられています。言ってみれば、大学は人類が蓄積してきた知識を保存・分類し、次代へ受け渡す<b>「知識の博物館」</b>です。その価値は大きい一方で、<b>「その知識を実社会でどう使うか」</b>を学ぶ機会は多くないのです。</p>
+        <p>しかし現実には、多くの学生が研究者の卵ではなく、社会人になる最後の教育機関として大学に進学し、総合的かつ実践的な学びを期待しています。これはどこの大学がどうこうの問題ではなく、<b>大学という制度と学生の期待との間にある、構造的な期待ギャップ</b>です。「大学に行ったけど意味が無かった」という声の原因は、ここにあります。</p>
+      </div>
+
+    </div>
+  </div>
+</section><!-- ===== KURIHARA SEMINAR ===== -->
+<section class="position">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="eyebrow">Kurihara Seminar</span>
+      <h2>栗原ゼミの役割</h2>
+    </div>
+    <div class="reveal">
+      <div class="pos-callout seminar-summary">
+        <div class="summary-column">
+          <p><b>栗原ゼミは、大学教育をイノベートします。</b>ドラッカーは、イノベーションは新しいものを作るだけでなく、既存のものに新たな価値を与えることも含まれると述べています。栗原ゼミは大学教育を否定するのではなく、そこに<b>新たな価値の息吹</b>を吹き込みます。</p>
+        </div>
+        <div class="summary-column">
+          <p>栗原ゼミのカリキュラムは、この期待ギャップを具体的に埋め、<b>「①単なる知識の山から、実際に使える課題解決力に変える」</b>ことを最低ラインの成果として設計しています。課題解決能力は、今後10年程度で生成AIとの関係で大幅に陳腐化するからこそ、これは出発点に過ぎません。そのうえでAI共生社会を前提に、<b>「②現実の世界から問題を発見し、課題を設定する力」「③複数の解決策の中から、最も望ましいものを選択する力」</b>を育てることを目的にカリキュラムを設計しています。②③は、グローバルに見てもMIT・Stanford・Harvardなどで行われている先進的な取り組みと方向性を同じくするものです。</p>
+        </div>
+      </div>
+
+      <div class="pos-block">
+        <h4>学びの到達点と限界</h4>
+        <p>在学中という限られた期間では、②③は「種を植える」ことしかできない可能性があります。①については、本人の取り組み次第で、ある程度「実感できるレベル」になると考えています。</p>
+      </div>
+
+      <div class="pos-block">
+        <h4>ゼミの位置付けと学生の主体性</h4>
+        <p>ゼミは「ゼミ生の主体的な態度」を原動力として運営されるものです。栗原ゼミでは、ゼミを<b>「就職前の最後の教育の砦」</b>と位置付けています。社会に出れば、私たちは自己責任で行動することを求められます。だからこそ、自己責任とは何かを明確に定義したうえで、社会に出る前に「自己責任で学ぶ」体験をしてもらいます。</p>
+      </div>
+
+      <div class="pos-block">
+        <h4>ゼミ運営の基本姿勢</h4>
+        <p>栗原ゼミでは、ゼミ生に「やりなさい」といった管理をするつもりはありません。卒業後の栗原ゼミアルムナイへの参加も、完全に任意です。<b>入ゼミ希望者には、「育ててもらう」のではなく「自分で伸びる」ための場所を得るという意識が必要です。</b></p>
+      </div>
+    </div>
+  </div>
+</section><!-- ===== TENSIONS ===== -->
 <section class="tensions">
   <div class="wrap">
     <div class="sec-head reveal">
       <span class="eyebrow">Who this is for</span>
       <h2 class="punch-head">「ゼミに打ち込んだ」<br>胸を張れる二年間を過ごす</h2>
-      <p class="dream-note">「大学なんか行っても意味ない」——<br>若者の選択を否定する<br>そんな夢のない言葉を言わない大人になるために<br>充実した大学生活を。</p>
+      <div class="dream-note dream-note-grid">
+        <p class="dream-note-card">自分の価値は、自分で決める。<br>価値を他人に依存しない。<br>充実した大学生活を自分の意志で過ごし、<br>夢のない言葉を言わない大人になる。</p>
+        <p class="dream-note-card">「大学なんか行っても意味ない」——<br>若者の選択を否定する、<br>そんな夢のない言葉を言わない大人になるために。<br>充実した大学生活を。</p>
+      </div>
     </div>
     <div class="t-grid reveal">
       <div class="t-cell">
@@ -794,52 +1051,7 @@
     </div>
   </div>
 </section>
-<!-- ===== POSITION (大学教育とゼミの位置付け) ===== -->
-<section class="position">
-  <div class="wrap">
-    <div class="sec-head reveal">
-      <span class="eyebrow">大学教育とゼミの位置付け</span>
-      <h2>「学問」の本来の意味から、考える。</h2>
-    </div>
 
-    <div class="reveal">
-      <div class="pos-block">
-        <h4>大学と学問の本来の意味</h4>
-        <p>本来、大学は研究者の卵を育てるための「学問」をする場所でした。学問とは、<b>「自ら問うて学ぶ」</b>主体的な学びを意味します。だからこそ大学生は、生徒とは区別して、主体的に学ぶ存在として「学生」と呼ばれてきました。</p>
-      </div>
-
-      <div class="pos-block">
-        <h4>専門分化と学問の構造</h4>
-        <p>学生は専門分野に分かれ、自分が目指す分野の先人の叡智の継承を目的に学びます。「科学」が「分けた科ごとの学」と言われるように、目の前の現象全体をそのまま理解するのは難しく、現象を分解して「狭く・深く」掘り下げることで世界の謎を解き明かそうとしてきました。会計学もまた、社会科学の一領域として情報提供の在り方を追及しています。</p>
-      </div>
-
-      <div class="pos-block">
-        <h4>大学教育の限界と期待ギャップ</h4>
-        <p>大学の学びは、それぞれの専門分野が「深く・狭く」独立して成り立っているため、他分野の知識とどう関連し、全体としてどう考えるかという総合的な学びの機会は多くありません。また、大学は研究者の卵として「過去に明らかになったこと」の継承が中心であり、<b>「その知識を実社会でどう使うか」</b>を学ぶ機会は多くないのです。</p>
-        <p>しかし現実には、多くの学生が研究者の卵ではなく、社会人になる最後の教育機関として大学に進学し、総合的かつ実践的な学びを期待しています。これはどこの大学がどうこうの問題ではなく、<b>大学という制度と学生の期待との間にある、構造的な期待ギャップ</b>です。「大学に行ったけど意味が無かった」という声の原因は、ここにあります。</p>
-      </div>
-
-      <div class="pos-callout">
-        <p>栗原ゼミのカリキュラムは、この期待ギャップを具体的に埋め、<b>「①単なる知識の山から、実際に使える課題解決力に変える」</b>ことを最低ラインの成果として設計しています。課題解決能力は、今後10年程度で生成AIとの関係で大幅に陳腐化するからこそ、これは出発点に過ぎません。そのうえでAI共生社会を前提に、<b>「②現実の世界から問題を発見し、課題を設定する力」「③複数の解決策の中から、最も望ましいものを選択する力」</b>を育てることを目的にカリキュラムを設計しています。②③は、グローバルに見てもMIT・Stanford・Harvardなどで行われている先進的な取り組みと方向性を同じくするものです。</p>
-      </div>
-
-      <div class="pos-block" style="margin-top:2.2em">
-        <h4>学びの到達点と限界</h4>
-        <p>在学中という限られた期間では、②③は「種を植える」ことしかできない可能性があります。①については、本人の取り組み次第で、ある程度「実感できるレベル」になると考えています。</p>
-      </div>
-
-      <div class="pos-block">
-        <h4>ゼミの位置付けと学生の主体性</h4>
-        <p>ゼミは「ゼミ生の主体的な態度」を原動力として運営されるものです。栗原ゼミでは、ゼミを<b>「就職前の最後の教育の砦」</b>と位置付けています。社会に出れば、私たちは自己責任で行動することを求められます。だからこそ、自己責任とは何かを明確に定義したうえで、社会に出る前に「自己責任で学ぶ」体験をしてもらいます。</p>
-      </div>
-
-      <div class="pos-block">
-        <h4>ゼミ運営の基本姿勢</h4>
-        <p>栗原ゼミでは、ゼミ生に「やりなさい」といった管理をするつもりはありません。卒業後の栗原ゼミアルムナイへの参加も、完全に任意です。<b>入ゼミ希望者には、「育ててもらう」のではなく「自分で伸びる」ための場所を得るという意識が必要です。</b></p>
-      </div>
-    </div>
-  </div>
-</section>
 <!-- ===== OS / concept ===== -->
 <section>
   <div class="wrap">
@@ -849,7 +1061,7 @@
     </div>
     <div class="os-body reveal">
       <p>私は大学教育を、ビュッフェレストランのようなものだと考えています。良質で、多様で、栄養のある学びを用意するのが教員の役割。何を選び、どれだけ取り、どう自分の血肉にするかは、学生に委ねられています。</p>
-      <p style="margin-top:1.4em"><strong>栗原ゼミは「育ててもらう場所」ではありません。自分で学びを取りに行く人が、より大きく成長する場所です。</strong>会計、経営、組織、戦略、人間理解、社会、哲学、AI、キャリア、卒業生との対話——国内最高峰のメニューをそろえています。</p>
+      <p style="margin-top:1.4em"><strong>栗原ゼミは「育ててもらう場所」ではありません。自分で学びを取りに行く人が、より大きく成長する場所です。</strong>会計、経営、組織、戦略、人間理解、社会、哲学、AI、キャリア、卒業生との対話——質の高いメニューをそろえています。</p>
     </div>
   </div>
 </section>
@@ -859,7 +1071,7 @@
   <div class="wrap">
     <div class="sec-head reveal">
       <span class="eyebrow">Why / What / How</span>
-      <h2>なぜ学び、何を学び、どう学ぶのか。</h2>
+      <h2 class="wwh-title"><span>なぜ学び、</span><span>何を学び、どう学ぶのか。</span></h2>
     </div>
     <div class="reveal">
       <div class="wwh-row">
@@ -872,7 +1084,7 @@
       <div class="wwh-row">
         <div class="wwh-key">What</div>
         <div>
-          <div class="wwh-q">何を学ぶのか。</div>
+          <div class="wwh-q">何を学ぶのか。<span class="wwh-axis">科学 × 哲学のハイブリッド</span></div>
           <p class="wwh-a">3年次は、<b>課題の要点分析と解決能力</b>を育てます。会計とマネジメントを学び、財務情報から企業の実態を読み取り、経営課題の解決の要点を見つける。4年次は、<b>「良い企業とは何か」</b>という根本の問いに向き合い、「問題発見と課題設定能力」「解決策の選択能力」の種を植えるためのプログラムを行います。生成AIも活用しながら、自分なりの判断軸をつくります。</p>
 
           <details class="ach det">
@@ -921,27 +1133,83 @@
   </div>
 </section>
 
-<!-- ===== CLOSING ===== -->
-<section class="closing">
+<!-- ===== LEARNING JOURNEY ===== -->
+<section class="position journey-section">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="eyebrow">Learning journey</span>
+      <h2>学びの構造。</h2>
+    </div>
+    <p class="journey-intro reveal">栗原ゼミでの学びは、大学に入ってから始まる<b>4年間で完結する話ではありません。</b>1〜2年で考える力の基礎を耕し、3〜4年でゼミに打ち込み、卒業後も学び続ける。長い時間軸の中で、ゼミは点ではなく<b>線</b>として機能します。</p>
+    <div class="journey reveal">
+      <article class="stage">
+        <span class="dot"></span>
+        <span class="when">YEAR 1 — 2</span>
+        <h3 class="where">大学1〜2年</h3>
+        <div class="lines">
+          <p class="line"><b>教養科目</b>で、考える力の基礎を養う。</p>
+          <p class="line"><b>専門科目</b>で、問題解決力のパズルのピースを集める。</p>
+        </div>
+      </article>
+      <article class="stage now">
+        <span class="dot"></span>
+        <span class="when">YEAR 3 — 4</span>
+        <h3 class="where">ゼミでの学び</h3>
+        <div class="lines">
+          <p class="line">集めたピースを<b>つなぎ、使う。</b></p>
+          <p class="line"><b>問題解決力と、課題設定力</b>の基礎をつくる。</p>
+        </div>
+      </article>
+      <a class="stage" href="#alumni">
+        <span class="dot"></span>
+        <span class="when">AFTER</span>
+        <h3 class="where">卒業後</h3>
+        <div class="lines">
+          <p class="line"><b>継続的に学べる場</b>（栗原ゼミアルムナイ）。</p>
+          <p class="line">志を共有する仲間と、<b>チャレンジできる環境</b>を創る。</p>
+        </div>
+      </a>
+      <a class="stage grad-cta" href="#careers">
+        <span class="dot"></span>
+        <span class="when">STORIES</span>
+        <h3 class="where">卒業後の活躍</h3>
+        <div class="lines">
+          <p class="line"><b>起業・独立</b>など、卒業生の実例。</p>
+          <p class="line">学びを、<b>自分の仕事</b>に変えた先輩たち。</p>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ===== NEXT: EDUCATION PROGRAM ===== -->
+<section class="closing program-next position-next">
   <div class="wrap">
     <div class="reveal">
-      <span class="eyebrow" style="--ember:#FBE3C4;color:var(--first-light)">At first light</span>
-      <h2>では、その学びは<br>どんな思想で<br>設計されているのか。</h2>
-      <p>次代に求められる力を育てる教育を追求した先で、世界のビジネススクールと重なる到達点にたどり着いた。その手法や方向性を、学部ゼミの文脈に再構成する。</p>
       <div class="cta-row">
-        <a class="btn btn-solid" href="#program">教育プログラムの特徴へ ↗</a>
+        <a class="btn btn-back" href="#top">← 前のページへ</a>
+        <a class="btn btn-solid" href="#program">教育プログラムを見る ↗</a>
       </div>
     </div>
   </div>
 </section>
+
 </div>
 <div class="page" id="page-program">
 <header class="hero" style="min-height:60svh">
   <canvas id="lorenz-program"></canvas>
   <div class="hero-inner wrap" style="padding:80px 0 60px">
     <span class="eyebrow">Program</span>
-    <h1 style="font-size:clamp(2.1rem,5.4vw,4rem)">次代に求められる力を追求した先に、<br><span class="glow">MBA的教育</span>との接点があった。</h1>
-    <p class="lead">栗原ゼミの学びは、MBA教育の模倣ではありません。<br>学生に必要な力を突き詰めた結果、世界のビジネススクールと重なる到達点にたどり着きました。</p>
+    <h1 style="font-size:clamp(2.1rem,5.4vw,4rem)">模倣ではない。<br><span class="glow">本質の追求</span>はシンクロする。</h1>
+    <p class="lead">次代に求められる力を追求した教育が、グローバルMBAと同じ方向にたどり着きました。</p>
+  </div>
+</header>
+
+<header class="mobile-page-hero">
+  <div class="wrap">
+    <span class="eyebrow">Program &nbsp;|&nbsp; 教育プログラム</span>
+    <h1>模倣ではない。<br><span class="glow">本質の追求</span>は<br>シンクロする。</h1>
+    <p>次代に求められる力を追求した教育が、グローバルMBAと同じ方向にたどり着きました。</p>
   </div>
 </header>
 
@@ -965,7 +1233,7 @@
   <div class="wrap">
     <div class="sec-head reveal">
       <span class="eyebrow">Four pillars</span>
-      <h2>四つの教育思想を、栗原ゼミの言葉に。</h2>
+      <h2>四つの教育思想</h2>
     </div>
 
     <div class="reveal">
@@ -1009,71 +1277,20 @@
 </section>
 
 
-<!-- ===== 3・4年次の具体的な学び ===== -->
-<section>
-  <div class="wrap">
-    <div class="sec-head reveal">
-      <span class="eyebrow">Year 3 &amp; 4</span>
-      <h2>3・4年次の具体的な学び。</h2>
-    </div>
-    <div class="reveal">
-      <p class="wwh-a" style="margin-bottom:1.6em">3年次は、<b>課題の要点分析と解決能力</b>を育てます。会計とマネジメントを学び、財務情報から企業の実態を読み取り、経営課題の解決の要点を見つける。4年次は、<b>「良い企業とは何か」</b>という根本の問いに向き合い、「問題発見と課題設定能力」「解決策の選択能力」の種を植えるためのプログラムを行います。生成AIも活用しながら、自分なりの判断軸をつくります。</p>
-
-      <details class="ach det">
-        <summary>
-          <span class="ach-tag">3年次</span>
-          <span class="ach-label">企業を読み解く力を鍛える</span>
-          <span class="ach-ic" aria-hidden="true">+</span>
-        </summary>
-        <div class="ach-body">
-          <p>専門性と、企業を幅広く俯瞰する力。3年次はこの二つを、<b>アカウンティング分野</b>と<b>マネジメント分野</b>に分けて訓練します。基本は事例検討形式です。</p>
-          <h5>アカウンティング ── 財務会計の専門性</h5>
-          <p>「実際の企業の状況」と「財務諸表上の表示」の関係を、企業会計原則・企業会計基準を前提に分析します。狙いは、財務会計論で学んだ知識をもとに、現実の経営実態を会計のルールで財務諸表へ自在に翻訳し、逆に財務情報から企業の実態を再生して語れる力。とりわけ<b>財務領域</b>の能力を実装します。栗原ゼミは制度上、財務会計を専門領域とする専門ゼミとして位置づけられており、その専門性をしっかり磨きます。</p>
-          <h5>マネジメント ── 解決の要点を見つける</h5>
-          <p>理念・戦略・組織・人・会計を横断する学際的プログラム。現実の経営課題は一つの学問領域に切り分けられず、複雑に絡み合います。シンプルな事例から徐々に複雑な事例へ進み、最終的に「不確実な環境下への対応」を扱います。課題解決そのものはAIで陳腐化しますが、<b>「解決の要点」を特定し、具体的な解決案をコーディネートする力</b>は、AIと組み合わせてこそ武器になります。この力を育てることに重点を置きます。</p>
-        </div>
-      </details>
-
-      <details class="ach det" style="margin-top:14px">
-        <summary>
-          <span class="ach-tag">4年次</span>
-          <span class="ach-label">「良い企業とは何か」を考える</span>
-          <span class="ach-ic" aria-hidden="true">+</span>
-        </summary>
-        <div class="ach-body">
-          <p>卒業研究と連動し、「良い企業とは何か」という抽象的な問いに向き合います。3年次で課題の要点分析・解決能力を育て、4年次では<b>「問題発見と課題設定能力」「解決策の選択能力」</b>の種を植えます。</p>
-          <h5>問題発見・課題設定力とは</h5>
-          <p>同じものを見ても、他者が気づけない問題が自分には見える──その力の源泉は、「多分こうだろう」という自分なりの基準と現実とのズレ（違和感＝予測誤差）です。基準が無ければ違和感も生まれません。哲学や社会学の知見を援用して「良い」という抽象概念と向き合い、<b>自分なりの判断軸</b>をつくることで、この力を高めます。</p>
-          <h5>ディスカッションと文章化</h5>
-          <p>「ある視点では良いが、別の視点では良くない」と気づける事例を検討し、「良い」という言葉の階層性・多様性を実感します。トロッコ問題のようなシンプルな題材から、「資本主義の功罪＝経済成長と格差」「ホワイト企業と成長機会＝楽なことは良いことか」まで。これは一見、財務会計から外れて見えて、実は会計の最重要論点である<b>「認識」</b>を拡張したものであり、会計的な学習成果の下地になります。</p>
-          <h5>卒業研究 ── 最後の仕上げ</h5>
-          <p>「自分なりの"良い"を定義し、それを現実の世界から識別するための要件にして、文章化する」。生成AIの適切な使い方の指導を含め、積極的に活用します。一度自分で判断軸を構築し、世の中の現象を分析した経験は、成長とともに<b>自分の力で更新していける</b>点に大きな意味があります。</p>
-          <h5>AI共生社会に向けて</h5>
-          <p>従来重視された「課題解決力」は、既に明らかな課題をどう解くかに過ぎません。AI共生社会では、課題解決を人間が担う価値は急速に後退します。より重要なのは<b>「AIに何を解決させるか」を考える力</b>。多面的に解釈し評価する力を育て、問題発見・課題設定能力の種を植えます。</p>
-        </div>
-      </details>
-    </div>
-  </div>
-</section>
-
 <!-- ===== LEADER VISION ===== -->
-<section class="position">
+<section class="position program-leader">
   <div class="wrap">
     <div class="sec-head reveal">
       <span class="eyebrow">Leader, redefined</span>
-      <h2>栗原ゼミが目指すリーダー像。</h2>
+      <h2>栗原ゼミが考えるリーダー像。</h2>
     </div>
 
     <div class="reveal">
-      <div class="pos-block">
-        <p>栗原ゼミは、MBA教育を模倣しているのではありません。次代に求められる力を育てる教育を追求した結果、グローバルMBAが重視してきた教育思想や手法と同じ方向に到達しました。そのうえで、それらをパズルのピースとして受け取り、学部ゼミという場に合わせて、<b>ケースメソッド、理論分析、課題設定、AI活用、価値判断</b>を統合した教育プログラムを実践しています。目指しているのは、単に知識を持つ人材ではありません。</p>
-      </div>
-
       <div class="pos-callout">
         <p>技術を活用し、他者の価値観を理解する。<br>
         理論を用いて、客観的・科学的に状況を分析する。<br>
         そして最後は、<b>自分の判断として選択し、その結果を引き受ける</b>。</p>
-        <p style="margin-top:1.2em">栗原ゼミが育てているのは、リーダーそのものではありません。<b>リーダーになれる人</b>です。<br>なるかどうかは、自分で決めればよい。</p>
+        <p style="margin-top:1.2em">栗原ゼミが育てているのは、リーダーそのものではありません。<b>リーダーになれる人</b>です。<br>なるかどうかは、自分で決めればよいことです。</p>
       </div>
 
       <div class="pos-block" style="margin-top:2.2em">
@@ -1086,13 +1303,20 @@
 </section>
 
 <!-- ===== CLOSING ===== -->
-<section class="closing">
+<section class="closing program-next">
   <div class="wrap">
     <div class="reveal">
       <span class="eyebrow" style="--ember:#FBE3C4;color:var(--first-light)">Next step</span>
-      <h2>では、この学びは<br>卒業後どこへ続くのか。</h2>
-      <p>学びは2年間で終わらない。卒業後の学びの共同体──栗原ゼミアルムナイへ。</p>
+      <h2>守・破・離</h2>
+      <p class="shuhari-concept">「型を学び、型を破り、やがて型を離れて自分のものにしていく」という、日本の伝統的な成長プロセスを意味する概念です。</p>
+      <div class="shuhari" aria-label="学びの三段階">
+        <div class="shuhari-step"><b>守</b><span>基礎としての「守」</span></div>
+        <div class="shuhari-step is-next"><b>破</b><span>基礎を応用する「破」</span></div>
+        <div class="shuhari-step"><b>離</b><span>自ら創る「離」</span></div>
+      </div>
+      <p>3つの学びの段階のうち、卒業後は応用段階の「破」へ進みます。学びは2年間で終わりません。卒業後の学びの共同体──栗原ゼミアルムナイで、実践と対話を重ねながら学びを深めていきます。</p>
       <div class="cta-row">
+        <a class="btn btn-back" href="#position">← 前のページへ</a>
         <a class="btn btn-solid" href="#alumni">アルムナイへ ↗</a>
       </div>
     </div>
@@ -1104,18 +1328,19 @@
   <canvas id="lorenz-alumni"></canvas>
   <div class="hero-inner wrap" style="padding:80px 0 60px">
     <span class="eyebrow">Alumni Community &nbsp;|&nbsp; 栗原ゼミアルムナイ</span>
-    <h1 style="font-size:clamp(2.1rem,5.4vw,4rem)">学びは、卒業してからも<br><span class="glow">続く</span>。</h1>
-    <p class="lead">不確実な世界を生き抜くための、<br>助け合いのネットワークを創る。</p>
+    <h1 style="font-size:clamp(2.1rem,5.4vw,4rem)">個の力を磨く。<br><span class="glow">仲間を作る。</span></h1>
+  </div>
+</header>
+<header class="mobile-page-hero">
+  <div class="wrap">
+    <span class="eyebrow">Alumni Community</span>
+    <h1>個の力を磨く。<br><span class="glow">仲間を作る。</span></h1>
+    <p>卒業後も学び続け、互いの挑戦を支える共同体へ。</p>
   </div>
 </header>
 <!-- ===== COMMUNITY / ALUMNI ===== -->
 <section class="community">
   <div class="wrap">
-    <div class="sec-head reveal">
-      <span class="eyebrow">Community ── 栗原ゼミアルムナイ</span>
-      <h2>学びは、卒業してからも続く。</h2>
-    </div>
-
     <p class="os-quote reveal" style="margin-bottom:.3em">不確実な世界を生き抜くための、<br><span class="hl">助け合いのネットワークを創る。</span></p>
     <div class="os-body reveal">
       <p>現代社会は、AI技術の発展や価値観の多様化により、予測不能な変化の中にあります。これは悲観すべき状態ではなく、「予測して準備する」発想から、<b>「環境変化に柔軟に対応できる適応力を上げる」</b>発想へ切り替えることで対処できるものです。適応力を上げるとは、個人の力で立ち向かうのではなく、異なる個性や視点を持つ者同士が深く結びつき、チームとしての総合力で状況に向き合うアプローチです。</p>
@@ -1126,13 +1351,13 @@
     <details class="ach det reveal">
       <summary>
         <span class="ach-tag">背景</span>
-        <span class="ach-label">教育設計の背景 ── なぜ、こう設計するのか</span>
+        <span class="ach-label">教育設計の背景</span>
         <span class="ach-ic" aria-hidden="true">+</span>
       </summary>
       <div class="ach-body">
         <h5>教育の目的</h5>
         <p>「エリートを育てる」ために教育を行っているわけではありません。社会は幸せな人間が集まることで幸せになるのであり、人間を社会のための道具として扱うべきではない──そう考えています。教育はあくまで<b>学生本人</b>のためのものであり、社会の豊かさは結果に過ぎません。</p>
-        <h5>教育者としての誠実 ── Integrity</h5>
+        <h5>教育者として誠実であること</h5>
         <p>ここでいう誠実とは、<b>自らの行為の結果に責任を引き受ける覚悟</b>（Integrity）です。だから教育は単なる熱意ではなく、合理的に設計されるべきものと位置づけています。とはいえ、これは教員側の覚悟の問題であり、学生に成果の期待を押し付けるものではありません。</p>
         <h5>科学的根拠に基づく設計</h5>
         <p>私の教育は、科学的根拠に基づいて目的合理的に設計された、成果のコントロールが可能なプロセスという前提で行っています。文系の学問・科学が机上の空論ではなく、現実に影響を及ぼせるツールであることを示すこと自体が、学びへの好奇心を刺激すると考えるからです。一方、「そもそも何を目的・成果とすべきか」は、哲学という先人の叡智との対話を通じて探求しています。専門家である以前に教養人であるべき、という姿勢の具体化です。</p>
@@ -1158,13 +1383,14 @@
   </div>
 </section>
 <!-- ===== CLOSING ===== -->
-<section class="closing">
+<section class="closing program-next alumni-next">
   <div class="wrap">
     <div class="reveal">
       <span class="eyebrow" style="--ember:#FBE3C4;color:var(--first-light)">Next step</span>
-      <h2>学びの先に、<br>どんな道があるのか。</h2>
+      <h2 class="next-stage-title"><span class="stage-symbol">「離」</span><span class="stage-copy">学びの先にある<br>オリジナルな生き方</span></h2>
       <p>就職、起業、独立——学びを道具として自分の進路を決めた先輩たち。卒業後の進路へ。</p>
       <div class="cta-row">
+        <a class="btn btn-back" href="#program">← 前のページへ</a>
         <a class="btn btn-solid" href="#careers">卒業後の進路 ↗</a>
       </div>
     </div>
@@ -1179,6 +1405,14 @@
     <span class="eyebrow">Career paths</span>
     <h1 style="font-size:clamp(2rem,5vw,3.6rem)">卒業後の進路</h1>
     <p class="lead">就職、起業、独立——道はひとつではない。<br>学びを道具として、自分の進路を自分で決めた先輩たち。</p>
+  </div>
+</header>
+
+<header class="mobile-page-hero">
+  <div class="wrap">
+    <span class="eyebrow">Career paths</span>
+    <h1>卒業後の進路</h1>
+    <p>就職、起業、独立——道はひとつではない。<br>学びを道具として、自分の進路を自分で決めた先輩たち。</p>
   </div>
 </header>
 
@@ -1225,13 +1459,14 @@
 </section>
 
 <!-- ===== CLOSING ===== -->
-<section class="closing">
+<section class="closing careers-next">
   <div class="wrap">
     <div class="reveal">
       <span class="eyebrow" style="--ember:#FBE3C4;color:var(--first-light)">Next step</span>
       <h2>次に進むのは、<br>あなたの番。</h2>
       <p>志望純度を最も重視する選考。伸びる人、五つの力、募集の流れ——ゼミ選考についてへ。</p>
       <div class="cta-row">
+        <a class="btn btn-back" href="#alumni">← 前のページへ</a>
         <a class="btn btn-solid" href="#selection">ゼミ選考について ↗</a>
       </div>
     </div>
@@ -1246,6 +1481,14 @@
     <span class="eyebrow">Selection</span>
     <h1 style="font-size:clamp(2rem,5vw,3.6rem)">選考について</h1>
     <p class="lead">伸びる人、来るべきではない人。鍛える五つの力。そして、選抜で重視すること。</p>
+  </div>
+</header>
+
+<header class="mobile-page-hero">
+  <div class="wrap">
+    <span class="eyebrow">Selection</span>
+    <h1>選考について</h1>
+    <p>伸びる人、来るべきではない人。鍛える五つの力。そして、選抜で重視すること。</p>
   </div>
 </header>
 
@@ -1285,14 +1528,14 @@
   <div class="wrap">
     <div class="sec-head reveal">
       <span class="eyebrow">Five capacities</span>
-      <h2>栗原ゼミで鍛える、五つの力。</h2>
+      <h2>栗原ゼミで鍛える五つの力。</h2>
     </div>
     <div class="pow-grid reveal">
-      <div class="pow"><span class="k">Read</span><span class="jp">事象の背景を読む</span><span class="d">企業・組織・人間の背後にある構造（メカニズム）を読み取る</span></div>
-      <div class="pow"><span class="k">Ask</span><span class="jp">問う</span><span class="d">前提を疑い、本当に考えるべき問題を見つける</span></div>
-      <div class="pow"><span class="k">Connect</span><span class="jp">体系化</span><span class="d">会計・経営・社会・AIを結びつけて全体として考える</span></div>
-      <div class="pow"><span class="k">Express</span><span class="jp">表現する</span><span class="d">自分の考えを、他者に伝わる形で言語化する</span></div>
-      <div class="pow"><span class="k">Decide</span><span class="jp">決める</span><span class="d">正解のない状況で、根拠を持って判断する</span></div>
+      <div class="pow"><span class="k">Read</span><span class="jp">背景を読む</span><span class="d">企業・組織・人間。すべての存在の現象には背景となる構造（メカニズム）がある。構造を読む力を鍛える。</span></div>
+      <div class="pow"><span class="k">Ask</span><span class="jp">問う</span><span class="d">何を問題とすべきか。問題の前提を疑い、真に解決すべき課題を発見する力を鍛える。</span></div>
+      <div class="pow"><span class="k">Connect</span><span class="jp">体系化</span><span class="d">学問を体系化し、課題を分析し、解決する力を鍛える。</span></div>
+      <div class="pow"><span class="k">Express</span><span class="jp">表現する</span><span class="d">自分の考えを、他者に伝わる形で言語化する力を鍛える。</span></div>
+      <div class="pow"><span class="k">Decide</span><span class="jp">決める</span><span class="d">正解がない。複数の正解がある。どんな状況でも、ブレない自分の判断軸で決断する力を鍛える。</span></div>
     </div>
   </div>
 </section>
@@ -1302,10 +1545,11 @@
   <div class="wrap">
     <div class="sec-head reveal">
       <span class="eyebrow">Selection</span>
-      <h2>選抜で最も重視するのは、志望純度。</h2>
+      <h2>選抜で最も重視するのは志望純度。</h2>
     </div>
 
     <p class="purity reveal">志望純度 <span class="mult">＝</span> ゼミとの適合性 <span class="mult">×</span> 学ぶ意欲</p>
+    <p class="purity-note reveal">ゼミの内容を正しく理解したうえで、栗原ゼミでなければならない理由があるか。</p>
 
     <details class="ach reveal">
       <summary>
@@ -1314,19 +1558,37 @@
         <span class="ach-ic" aria-hidden="true">+</span>
       </summary>
       <div class="ach-body">
-        <p>選抜を行う上で問題となるのは、選抜資料に書かれた言葉だけでは「志望純度の高さ」が評価できないということです。そのため、志望純度の高さを評価する重要な指標として、<b>「①栗原の担当科目の履修状況」「②これまでのゼミ見学、質問・相談などの学ぶ態度」</b>という、応募時点までの実績を重視して選抜を行います。</p>
-        <p>これらは「ゼミとの適合性」を評価する上で重要であることは当然ながら、同時に「やる気」を評価する上でも重要な指標になります。なぜなら、①は履修ガイダンス資料に「履修状況が選考時の基準となる」と明記されており、②は簿記や財務会計論の授業で「質問状況等が選抜時に影響する」と明確に説明されており、「やる気」のある学生であれば、条件を満たすように行動することが十分可能であったからです。そのため、<b>①②の実績が既にある学生は「学習内容への興味＝ゼミとの適合性」「やる気」が行動で証明済み</b>と評価できることになります。</p>
-        <p>一方で、応募時点での実績が無い学生を排除するつもりはありません。このゼミ選考において、初めて真剣に所属ゼミに向き合った学生も多いはずです。<b>面談でのやり取りや志望理由の記載で、志望純度がしっかりと確認できれば入ゼミは可能です。</b></p>
+        <p class="selection-evidence-intro">志望純度は、選抜資料に書かれた言葉だけでは判断できません。そこで、<b>応募時点までの行動</b>と、<b>面談・志望理由</b>の両面から確認します。</p>
+        <div class="selection-evidence">
+          <article class="evidence-card">
+            <span class="evidence-kicker">01 / What we see</span>
+            <h5>何を見るか</h5>
+            <ul class="evidence-points">
+              <li>栗原の担当科目の履修状況</li>
+              <li>ゼミ見学・質問・相談などの学ぶ態度</li>
+            </ul>
+            <p>応募時点までに、どのような行動を積み重ねてきたかを確認します。<b>実績は履歴としてデータ管理を行っています。</b></p>
+          </article>
+          <article class="evidence-card">
+            <span class="evidence-kicker">02 / Why it matters</span>
+            <h5>なぜ見るか</h5>
+            <p>履修や質問などの実績は、<b>学習内容への興味とゼミとの適合性</b>、そして<b>学ぶ意欲</b>が行動として表れたものだからです。十分な接触があった上で栗原ゼミを希望することは、<b>志望純度を判断する明確な指標</b>となります。</p>
+          </article>
+          <article class="evidence-card">
+            <span class="evidence-kicker">03 / Open door</span>
+            <h5>実績がない場合</h5>
+            <p><b>実績がある方が有利なのは事実です。</b>ただし、実績の有無だけで排除することはありません。面談でのやり取りや志望理由から志望純度を確認できれば、入ゼミは可能です。</p>
+          </article>
+        </div>
       </div>
     </details>
 
+    <h3 class="selection-schedule-head reveal">選考スケジュール</h3>
     <div class="sel-meta reveal">
       <div class="chip"><div class="lab">募集時期</div><div class="big">例年 11–12月頃<br><small>翌年4月 入ゼミ</small></div></div>
       <div class="chip"><div class="lab">受け入れ</div><div class="big">8名 程度<br><small>少人数・深い対話を重視</small></div></div>
       <div class="chip"><div class="lab">12期（2026年4月）実績</div><div class="big">入ゼミ 12名<br><small>目安倍率 約2倍（最終エントリーに至らなかった辞退者を含む）</small></div></div>
     </div>
-    <p class="presemi reveal">なお、入ゼミ予定者は、2月頃から5回程度の<b>プレゼミ・プレ合宿</b>があります。</p>
-
     <div id="flow" class="steps reveal" style="scroll-margin-top:90px">
       <div class="step">
         <span class="sn">Step 01</span>
@@ -1344,18 +1606,23 @@
         <p>エントリー希望者は予約制（先着）で面談。対面・オンライン・集団形式のいずれか。志望純度を確認します。</p>
       </div>
     </div>
+    <div class="schedule-notes reveal">
+      <p>なお、入ゼミ予定者は、2月頃から5回程度の<b>プレゼミ・プレ合宿</b>があります。</p>
+      <p>また、12月に実施予定の<b>アルムナイ総会</b>には、新ゼミ生も原則として参加をお願いしています。</p>
+    </div>
     <p class="sub reveal" style="color:var(--mist);font-size:.9rem;margin-top:30px">※ 連絡は原則オープンチャットに一元化。メールでの個別対応は行いません（プライベートな事情を除く）。</p>
   </div>
 </section>
 
 <!-- ===== CLOSING ===== -->
-<section class="closing">
+<section class="closing program-next selection-next">
   <div class="wrap">
     <div class="reveal">
-      <span class="eyebrow" style="--ember:#FBE3C4;color:var(--first-light)">At first light</span>
-      <h2>誰かが決めてくれるのを、<br>待たない人へ。</h2>
+      <span class="eyebrow" style="--ember:#FBE3C4;color:var(--first-light)">For the journey</span>
+      <h2>個の力を高め、仲間をつくる。<br>不確実な時代を共に生きる<br>パーティを求める人へ。</h2>
       <p>リーダーになる必要はありません。けれど、必要な時にリーダーシップを発揮できる人になってほしい。この考え方に共感できる人と、一緒に学びたいと思っています。</p>
       <div class="cta-row">
+        <a class="btn btn-back" href="#careers">← 前のページへ</a>
         <a class="btn btn-solid" href="#top">トップへ戻る ↗</a>
       </div>
     </div>
@@ -1365,7 +1632,6 @@
 <footer id="site-footer">
   <div class="wrap">
     <p>茨城キリスト教大学　経営学部 経営学科</p>
-    <p class="mincho" style="margin-top:.5em;font-size:1.1rem">栗原正樹ゼミ ／ 栗原ゼミアルムナイ</p>
   </div>
 </footer>
 
@@ -1389,7 +1655,7 @@ document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
   const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
   let W,H,DPR,cx,cy,scale;
   let ang=-0.5, head=0;
-  const TRAIL=520;      // 明るく光る先頭トレイルの長さ
+  const TRAIL=300;      // 明るく光る先頭トレイルの長さ
   const SPEED=9;        // 1フレームで進むステップ数
 
   // dawn gradient stops (cool night -> warm dawn), index normalized 0..1
@@ -1412,7 +1678,7 @@ document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
   }
 
   // integrate the Lorenz system
-  const N=8200, dt=0.006, sig=10, rho=28, beta=8/3;
+  const N=5000, dt=0.006, sig=10, rho=28, beta=8/3;
   const pts=new Float32Array(N*3);
   (function integrate(){
     let x=0.01,y=0,z=0;
@@ -1424,7 +1690,7 @@ document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
   })();
 
   function resize(){
-    DPR=Math.min(devicePixelRatio||1,2);
+    DPR=Math.min(devicePixelRatio||1, innerWidth<700?1.5:2);
     W=Math.max(1,canvas.clientWidth); H=Math.max(1,canvas.clientHeight);
     canvas.width=W*DPR; canvas.height=H*DPR;
     ctx.setTransform(DPR,0,0,DPR,0,0);
@@ -1445,13 +1711,24 @@ document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
   })();
   if(window.visualViewport){
     visualViewport.addEventListener('resize', safeResize, {passive:true});
-    visualViewport.addEventListener('scroll', safeResize, {passive:true});
+
   }
 
-  function frame(){
+  const colors=Array.from({length:N},(_,i)=>dawn(i/N));
+  const frameInterval=(innerWidth<700||(navigator.connection&&navigator.connection.saveData))?1000/30:0;
+  let lastFrame=0, canvasVisible=true;
+  if('IntersectionObserver' in window){
+    new IntersectionObserver(function(entries){canvasVisible=entries[0].isIntersecting;}).observe(canvas);
+  }
+
+  function frame(now){
+    if(!reduce) requestAnimationFrame(frame);
+    if(document.hidden||!canvasVisible) return;
+    if(frameInterval&&now-lastFrame<frameInterval) return;
+    lastFrame=now;
     // canvasが非表示(サイズ0)の間は描画せず、ループだけ継続
     const cw=canvas.clientWidth, ch=canvas.clientHeight;
-    if(cw<2||ch<2){ if(!reduce) requestAnimationFrame(frame); return; }
+    if(cw<2||ch<2) return;
     if(cw!==W||ch!==H){ safeResize(); }
     ctx.clearRect(0,0,W,H);
     const cosA=Math.cos(ang), sinA=Math.sin(ang);
@@ -1466,7 +1743,7 @@ document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
       const sx=cx+rx*scale;
       const sy=cy+(z-25)*scale*-1;
       if(i>0){
-        ctx.strokeStyle=dawn(i/N);
+        ctx.strokeStyle=colors[i];
         ctx.globalAlpha = reduce?0.42:0.30;
         ctx.beginPath(); ctx.moveTo(px,py); ctx.lineTo(sx,sy); ctx.stroke();
       }
@@ -1486,7 +1763,7 @@ document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
         const sy=cy+(z-25)*scale*-1;
         if(k>0 && idx!==0){
           const f=k/TRAIL;                 // 0=尾, 1=先頭
-          ctx.strokeStyle=dawn(idx/N);
+          ctx.strokeStyle=colors[idx];
           ctx.globalAlpha = 0.15 + f*f*0.85; // 先頭ほど明るく、尾も見える
           ctx.beginPath(); ctx.moveTo(lx,ly); ctx.lineTo(sx,sy); ctx.stroke();
         }
@@ -1503,12 +1780,21 @@ document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
     if(!reduce){
       head=(head+SPEED)%N;   // 光が軌道上を延々と走り続ける
       ang+=0.0034;           // ゆっくり回転し続ける
-      requestAnimationFrame(frame);
+
     }
   }
-  frame();
+  if(reduce) frame(performance.now());
+  else requestAnimationFrame(frame);
 })();
 
+
+/* ===== INTRO SKIP (再訪・ページ遷移後はアニメスキップ) ===== */
+(function(){
+  // The initial state is set in <head>; all SPA navigation after that skips it.
+  window.addEventListener('hashchange', function(){
+    document.documentElement.classList.add('skip-intro');
+  });
+})();
 
 /* ===== EGG NAV open/close ===== */
 (function(){

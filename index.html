@@ -12,9 +12,9 @@
   try{sessionStorage.setItem('ksa-visited','1');}catch(e){}
 })();
 </script>
-<title>栗原ゼミアルムナイ</title>
-<meta name="description" content="栗原正樹ゼミ ／ 栗原ゼミアルムナイ。学びの構造・ゼミの位置付け・教育プログラム・アルムナイ・ゼミ選考。">
-<meta property="og:title" content="栗原ゼミアルムナイ">
+<title>栗原ゼミAlumni</title>
+<meta name="description" content="栗原正樹ゼミ ／ 栗原ゼミAlumni。学びの構造・ゼミの位置付け・教育プログラム・Alumni・ゼミ選考。">
+<meta property="og:title" content="栗原ゼミAlumni">
 <meta property="og:description" content="正解のない世界で自分の決断を信じて進む。栗原正樹ゼミ。">
 <meta property="og:locale" content="ja_JP">
 <meta name="twitter:card" content="summary">
@@ -88,24 +88,25 @@
   /* 闇のカーテン(テキストだけを覆う。蝶canvasは上に出す) */
   .hero-curtain{
     position:absolute;inset:0;z-index:4;
-    background:var(--abyss);
+    background:#000;
     pointer-events:none;
-    animation:curtainFade 1.2s ease-out 3.2s forwards;
+    animation:curtainFade 1.2s ease-out 4.2s forwards;
   }
   @keyframes curtainFade{to{opacity:0}}
   /* canvas(蝶)はカーテンの上：闇の中で蝶だけが見える */
   #lorenz{position:absolute;inset:0;width:100%;height:100%;z-index:5!important}
   /* ヒーローコンテンツ：カーテンが開いてから登場 */
-  .hero-inner{position:relative;z-index:6;opacity:0;animation:contentIn 1.35s ease-out 4.45s forwards}
-  .scrollcue{opacity:0!important;animation:contentIn 1s ease-out 5.35s forwards!important}
+  .hero-inner{position:relative;z-index:6;opacity:0;animation:contentIn 1.35s ease-out 5.45s forwards}
+  .scrollcue{opacity:0!important;animation:contentIn 1s ease-out 6.35s forwards!important}
   @keyframes contentIn{to{opacity:1}}
   /* navとpagenav：最初は完全に隠し、イントロ後に登場 */
-  nav#nav{opacity:0;animation:contentIn 1s ease-out 4.75s forwards}
-  .pagenav-wrap{opacity:0;animation:contentIn 1s ease-out 4.75s forwards}
+  nav#nav{opacity:0;animation:contentIn 1s ease-out 5.75s forwards}
+  .pagenav-wrap{opacity:0;animation:contentIn 1s ease-out 5.75s forwards}
   /* 蝶：小さく遠くから中央へ飛んでくる */
   .hero canvas#lorenz{
     transform-origin:center 46%;
-    animation:butterflyApproach 3.6s cubic-bezier(.15,.8,.3,1) forwards;
+    animation:butterflyApproach 4.6s cubic-bezier(.15,.8,.3,1) forwards,
+              butterflyDepart .9s ease 4.55s forwards;
   }
   @keyframes butterflyApproach{
     0%{transform:scale(.12) translateY(40px);opacity:0}
@@ -113,19 +114,57 @@
     50%{opacity:.65}
     100%{transform:scale(1) translateY(0);opacity:1}
   }
+  @keyframes butterflyDepart{
+    0%{opacity:1;visibility:visible}
+    100%{opacity:0;visibility:hidden}
+  }
+  .lorenz-title{
+    position:absolute;left:50%;top:calc(50% + clamp(100px,14vw,170px));transform:translateX(-50%);z-index:7;
+    color:rgba(255,255,255,.92);font-family:"Fraunces",serif;font-size:clamp(.72rem,1.15vw,.94rem);
+    font-weight:400;letter-spacing:.3em;white-space:nowrap;pointer-events:none;
+    text-shadow:0 0 14px rgba(255,255,255,.35);opacity:0;
+    animation:lorenzTitleLife 5.4s ease forwards;
+  }
+  @keyframes lorenzTitleLife{
+    0%,18%{opacity:0;transform:translate(-50%,8px)}
+    32%,76%{opacity:.92;transform:translate(-50%,0)}
+    100%{opacity:0;visibility:hidden;transform:translate(-50%,-4px)}
+  }
+  .intro-skip{
+    position:absolute;right:clamp(18px,3vw,42px);bottom:clamp(72px,10vh,110px);z-index:8;
+    display:flex;align-items:center;gap:.7em;padding:.72em 1.15em;border:1px solid rgba(251,227,196,.35);
+    border-radius:40px;background:rgba(11,14,26,.52);backdrop-filter:blur(8px);color:var(--first-light);
+    font-family:"Fraunces",serif;font-size:.72rem;letter-spacing:.18em;cursor:pointer;
+    opacity:0;animation:introSkipLife 5.8s ease forwards;transition:border-color .25s,background .25s,color .25s;
+  }
+  .intro-skip span{font-size:1.15em;color:var(--gold);transition:transform .25s}
+  .intro-skip:hover{border-color:var(--gold);background:rgba(24,29,52,.88);color:var(--gold)}
+  .intro-skip:hover span{transform:translateX(3px)}
+  @media(max-width:640px){
+    .intro-skip{right:18px;bottom:calc(84px + env(safe-area-inset-bottom))}
+  }
+  @keyframes introSkipLife{
+    0%,8%{opacity:0}
+    18%,82%{opacity:1}
+    100%{opacity:0;visibility:hidden}
+  }
   /* 再訪・ページ遷移時はスキップ */
   .skip-intro .hero-curtain{animation:none;opacity:0}
   .skip-intro .hero-inner{animation:none;opacity:1}
   .skip-intro .scrollcue{animation:none!important;opacity:.85!important}
   .skip-intro nav#nav,
   .skip-intro .pagenav-wrap{animation:none;opacity:1}
-  .skip-intro .hero canvas#lorenz{animation:none;transform:none;opacity:1}
+  .skip-intro .hero canvas#lorenz{animation:none;transform:none;opacity:0;visibility:hidden}
+  .skip-intro .lorenz-title{display:none}
+  .skip-intro .intro-skip{display:none}
   @media(prefers-reduced-motion:reduce){
     .hero-curtain{animation:none!important;opacity:0!important}
     .hero-inner{animation:none!important;opacity:1!important}
     .scrollcue{animation:none!important;opacity:.85!important}
     nav#nav,.pagenav-wrap{animation:none!important;opacity:1!important}
-    .hero canvas#lorenz{animation:none!important;transform:none!important;opacity:1!important}
+    .hero canvas#lorenz{animation:none!important;transform:none!important;opacity:0!important;visibility:hidden!important}
+    .lorenz-title{display:none!important}
+    .intro-skip{display:none!important}
   }
   /* #lorenz は OPENING SEQUENCE 内で定義済み */
   .hero::after{
@@ -136,6 +175,35 @@
   }
   .hero-inner{width:100%;min-width:0;align-self:stretch;box-sizing:border-box;padding:110px 0 60px} /* z-indexとopacityはOPENING SEQUENCEで定義 */
   .hero .eyebrow{margin-bottom:.2em}
+  .project-info{position:relative;z-index:20;display:table}
+  .project-trigger{
+    margin:0 0 .2em;padding:0;border:0;background:none;cursor:pointer;
+    font-family:"Zen Old Mincho",serif;font-style:normal;font-size:.92rem;font-weight:700;letter-spacing:.14em;
+    animation:projectSignal 5.8s cubic-bezier(.45,0,.55,1) infinite;
+  }
+  .project-trigger::before,.project-trigger::after{display:none}
+  .project-trigger:hover,.project-trigger:focus-visible{color:var(--first-light);outline:none}
+  @keyframes projectSignal{
+    0%,100%{opacity:.84;filter:drop-shadow(0 0 2px rgba(244,163,64,.2));text-shadow:0 0 4px rgba(244,163,64,.16)}
+    50%{opacity:1;filter:drop-shadow(0 0 6px rgba(244,163,64,.48));text-shadow:0 0 11px rgba(244,163,64,.38)}
+  }
+  .project-popup{
+    position:absolute;left:0;top:calc(100% + 14px);width:min(620px,calc(100vw - 36px));max-height:min(520px,calc(100svh - 190px));
+    padding:26px 28px 28px;border:1px solid rgba(244,163,64,.38);border-radius:18px;
+    background:linear-gradient(150deg,rgba(24,29,52,.97),rgba(11,14,26,.98));
+    box-shadow:0 24px 60px rgba(0,0,0,.58),0 0 32px rgba(244,163,64,.12);backdrop-filter:blur(14px);
+    overflow:auto;opacity:0;visibility:hidden;pointer-events:none;transform:translateY(-8px) scale(.985);
+    transition:opacity .28s ease,transform .28s ease,visibility .28s;z-index:30;
+  }
+  .project-info.open .project-popup{opacity:1;visibility:visible;pointer-events:auto;transform:none}
+  .project-popup-head{display:flex;align-items:center;justify-content:space-between;gap:20px;margin-bottom:16px}
+  .project-popup-head span{font-family:"Fraunces",serif;font-style:italic;color:var(--gold);font-size:.75rem;letter-spacing:.16em}
+  .project-popup-close{width:30px;height:30px;border:1px solid rgba(251,227,196,.2);border-radius:50%;background:none;color:var(--mist);font-size:1.15rem;line-height:1;cursor:pointer}
+  .project-popup-close:hover{border-color:var(--gold);color:var(--gold)}
+  .project-popup p{margin:0;color:rgba(251,227,196,.84);font-size:.88rem;line-height:1.9;text-align:left}
+  .project-popup p+p{margin-top:1.05em}
+  .project-popup strong{color:var(--first-light);font-weight:700;text-shadow:0 0 12px rgba(244,163,64,.22)}
+  .project-popup .concept{color:var(--gold)}
   .hero h1{
     font-family:"Zen Old Mincho",serif;font-weight:900;
     font-size:clamp(2.8rem,8vw,5.8rem);line-height:1.15;letter-spacing:.06em;
@@ -159,6 +227,8 @@
     max-width:none;color:rgba(216,220,236,.8);
     font-size:clamp(.92rem,1.5vw,1.08rem);line-height:2.15;
   }
+  .hero p.lead strong{color:rgba(251,227,196,.94);font-weight:600}
+  .hero p.lead .lead-accent{color:rgba(244,163,64,.94)}
   .hero p.lead br{display:block}
   .hero-right{
     display:flex;justify-content:center;align-items:center;
@@ -370,7 +440,8 @@
   .selection-next p{max-width:58ch;text-align:left}
   .careers-next p{max-width:46ch;text-align:left}
   /* top hero: keep the visual weight in the upper two-thirds of the viewport */
-  #page-top .hero{align-items:flex-start}
+  #page-top .hero{align-items:flex-start;background:#000}
+  #page-top .hero::after{display:none}
   #page-top .hero-inner{padding:clamp(108px,14vh,148px) 0 54px}
   #page-top .hero h1{font-size:clamp(2.75rem,7vw,5.15rem);letter-spacing:.045em}
   #page-top .hero-sub{margin-bottom:1.35em}
@@ -637,14 +708,21 @@
   @keyframes corePulse{0%,100%{opacity:.5}50%{opacity:1}}
 
   .compass-hint{
-    position:absolute;left:0;right:0;bottom:-30px;text-align:center;z-index:3;
-    font-family:"Zen Old Mincho",serif;font-weight:700;font-size:.9rem;color:var(--gold);letter-spacing:.2em;
+    position:absolute;left:0;right:0;bottom:-48px;z-index:3;
+    display:flex;align-items:center;justify-content:center;gap:8px;
+    font-family:"Fraunces",serif;font-weight:500;font-size:.72rem;color:var(--gold);letter-spacing:.18em;
     transition:opacity .35s;pointer-events:none;
     animation:hintGlow 3.4s ease-in-out infinite;
   }
+  .hint-cursor{width:18px;height:22px;overflow:visible;filter:drop-shadow(0 0 7px rgba(244,163,64,.5));animation:cursorInvite 1.7s ease-in-out infinite}
+  @keyframes cursorInvite{0%,100%{transform:translate(5px,5px)}50%{transform:translate(0,0)}}
   @keyframes hintGlow{
     0%,100%{opacity:.55;text-shadow:0 0 0 transparent}
     50%{opacity:1;text-shadow:0 0 12px rgba(244,163,64,.6)}
+  }
+  @media(hover:none),(pointer:coarse){
+    .hint-text{font-size:0}
+    .hint-text::after{content:"TAP";font-size:.72rem}
   }
 
   /* 方位に伸びるリンク（初期：中心に畳まれ非表示） */
@@ -693,8 +771,26 @@
   .compass-stage.open .ray[style*="--dir:5"]{transform:translate(-50%,-50%) translate(170px,160px) scale(1);transition-delay:.50s}
   .compass-stage.open .ray[style*="--dir:5"] a{animation-delay:.50s}
 
+  /* PC：コンパスから各選択肢へ移動する間の隙間も操作範囲に含める */
+  @media(hover:hover) and (pointer:fine){
+    .compass-stage.open::before{
+      content:"";position:absolute;inset:-55px -260px -115px;z-index:0;pointer-events:auto;
+    }
+  }
+
   @media(max-width:640px){
-    .compass-stage.open{min-height:auto}
+    /* 展開後のメニューをヒーロー内の実寸として扱い、下側の見切れを防ぐ */
+    #page-top .hero-right .compass-stage.open{
+      width:min(100%,360px);height:auto;min-height:470px;
+    }
+    #page-top .hero-right .compass-stage.open .compass{
+      width:100%;height:auto;min-height:470px;
+    }
+    #page-top .compass-stage.open .compass-face{
+      inset:0 auto auto 50%;width:176px;height:176px;
+      transform:translateX(-50%) scale(.6);
+    }
+    #page-top .compass-stage.open .aura{top:88px}
     .compass-stage.open .ray{
       position:relative;left:auto;top:auto;transform:none!important;
       display:block;width:86%;max-width:320px;margin:9px auto 0;transition-delay:0s!important;
@@ -849,6 +945,30 @@
   .hero .eyebrow{max-width:90%;line-height:1.6}
   .mobile-page-hero{min-height:360px;padding:104px 0 58px}
   .mobile-page-hero h1{font-size:clamp(1.95rem,9.6vw,2.55rem)}
+  .project-popup{padding:21px 20px 23px;border-radius:15px}
+  .project-popup p{font-size:.82rem;line-height:1.82}
+  .project-trigger{font-size:.8rem;letter-spacing:.1em}
+}
+@media(max-width:640px){
+  /* スマホ：コンパスの下に6つの行き先を収める独立した展開領域を確保 */
+  #page-top .hero-right .compass-stage.open{
+    width:min(calc(100vw - 36px),360px)!important;
+    height:500px!important;
+    min-height:500px;
+  }
+  #page-top .hero-right .compass-stage.open .compass{
+    width:100%!important;
+    height:500px!important;
+    min-height:500px;
+  }
+  #page-top .compass-stage.open .compass-hint{
+    display:none;
+    animation:none;
+  }
+  #page-top .compass-stage.open .ray{
+    width:100%;max-width:320px;
+  }
+  #page-top .compass-stage.open .ray[style*="--dir:0"]{margin-top:168px}
 }
 </style>
 </head>
@@ -861,7 +981,7 @@
   <a href="#top">トップ ── 学びの構造</a><span class="sep">／</span>
   <a href="#position">ゼミの位置付け</a><span class="sep">／</span>
   <a href="#program">教育プログラムの特徴</a><span class="sep">／</span>
-  <a href="#alumni">アルムナイ</a><span class="sep">／</span>
+  <a href="#alumni">Alumni</a><span class="sep">／</span>
   <a href="#careers">卒業後の進路</a><span class="sep">／</span>
   <a href="#selection">ゼミ選考について</a>
 </div>
@@ -871,16 +991,27 @@
 <header class="hero">
   <canvas id="lorenz"></canvas>
   <div class="hero-curtain"></div>
+  <div class="lorenz-title" aria-hidden="true">LORENZ ATTRACTOR</div>
+  <button class="intro-skip" id="introSkip" type="button" aria-label="オープニングをスキップ">SKIP <span aria-hidden="true">›</span></button>
   <div class="hero-inner wrap">
     <!-- 上段：タイトル -->
-    <span class="eyebrow">Kurihara Seminar Community</span>
-    <h1><span class="glow">栗原ゼミアルムナイ</span></h1>
+    <div class="project-info" id="projectInfo">
+      <button class="eyebrow project-trigger" id="projectTrigger" type="button" aria-expanded="false" aria-controls="projectPopup">創発型実践教育プロジェクト</button>
+      <div class="project-popup" id="projectPopup" role="dialog" aria-label="創発型実践教育プロジェクトについて" aria-hidden="true">
+        <div class="project-popup-head"><span>About the project</span><button class="project-popup-close" type="button" aria-label="説明を閉じる">×</button></div>
+        <p>栗原ゼミAlumniは、<strong class="concept">システム論・複雑系科学・カオス理論</strong>を背景に栗原が構築した研究モデルを、<strong>現実の人間関係と活動の中で実践する</strong>プロジェクトです。</p>
+        <p>現在のように<strong>前提条件が揺らぎ、従来の成功パターンそのものが不確実になる環境</strong>では、「何をすれば上手くいくか」という単純な因果関係を特定することはできません。</p>
+        <p>だからこそ重要なのは、<strong>正解を予測することではなく</strong>、相互にシナジーを生む形で<strong class="concept">「チャレンジの総数」を増やすこと</strong>にあります。</p>
+        <p>そのため、<strong>現役生と卒業生が自由に相互作用</strong>し、そのつながりが<strong class="concept">自己組織化</strong>されることで、<strong>新たな挑戦や事業、ブレイクスルーが創発する仕組み</strong>を、栗原の研究モデルに基づいて実践しています。</p>
+      </div>
+    </div>
+    <h1><span class="glow">栗原ゼミAlumni</span></h1>
     <p class="hero-sub">正解のない世界で、自分の<em>決断</em>を信じて進む力を得る</p>
 
     <!-- 下段：リード文（左）＋ 羅針盤（右） -->
     <div class="hero-split">
       <div class="hero-left">
-        <p class="lead">学問という翼を。<br>人類の叡智という武器を。<br>世界を自分の決断で生き抜くための羅針盤を——ここで。</p>
+        <p class="lead">オープニングは、わずかな違いが未来を大きく変える<strong>「バタフライ効果」</strong>を表す<strong class="lead-accent">「ローレンツアトラクタ」</strong>をオープニングアニメーションとして採用しています。<br>正解のない世界で、<strong>自ら考え、決断し、他者との関わりから新たな学びを生み出す</strong>というAlumniの方針を表しています。</p>
         <div class="top-position-link">
           <a class="btn btn-solid" href="#position">ゼミの位置づけに進む ↗</a>
         </div>
@@ -930,10 +1061,13 @@
                 <circle class="needle-core" cx="100" cy="100" r="3" fill="#fff"/>
               </g>
             </svg>
-            <span class="compass-hint">ひらく</span>
+            <span class="compass-hint" aria-hidden="true">
+              <svg class="hint-cursor" viewBox="0 0 24 28" fill="none"><path d="M3 2.5V23l5.2-5.1 3.6 7.2 3.5-1.8-3.5-7H20L3 2.5Z" fill="currentColor" stroke="#0B0E1A" stroke-width="1.2" stroke-linejoin="round"/></svg>
+              <span class="hint-text">HOVER</span>
+            </span>
             <span class="ray" style="--dir:0"><a href="#position"><span>ゼミの位置付け</span></a></span>
             <span class="ray" style="--dir:1"><a href="#program"><span>教育プログラムの特徴</span></a></span>
-            <span class="ray" style="--dir:2"><a href="#alumni"><span>アルムナイ</span></a></span>
+            <span class="ray" style="--dir:2"><a href="#alumni"><span>Alumni</span></a></span>
             <span class="ray" style="--dir:3"><a href="#careers"><span>卒業後の進路</span></a></span>
             <span class="ray" style="--dir:4"><a href="#selection"><span>ゼミ選考について</span></a></span>
             <span class="ray" style="--dir:5"><a href="https://masakikurihara.com" target="_blank" rel="noopener"><span>指導教員を知る ↗</span></a></span>
@@ -1017,7 +1151,7 @@
 
       <div class="pos-block">
         <h4>ゼミ運営の基本姿勢</h4>
-        <p>栗原ゼミでは、ゼミ生に「やりなさい」といった管理をするつもりはありません。卒業後の栗原ゼミアルムナイへの参加も、完全に任意です。<b>入ゼミ希望者には、「育ててもらう」のではなく「自分で伸びる」ための場所を得るという意識が必要です。</b></p>
+        <p>栗原ゼミでは、ゼミ生に「やりなさい」といった管理をするつもりはありません。卒業後の栗原ゼミAlumniへの参加も、完全に任意です。<b>入ゼミ希望者には、「育ててもらう」のではなく「自分で伸びる」ための場所を得るという意識が必要です。</b></p>
       </div>
     </div>
   </div>
@@ -1165,7 +1299,7 @@
         <span class="when">AFTER</span>
         <h3 class="where">卒業後</h3>
         <div class="lines">
-          <p class="line"><b>継続的に学べる場</b>（栗原ゼミアルムナイ）。</p>
+          <p class="line"><b>継続的に学べる場</b>（栗原ゼミAlumni）。</p>
           <p class="line">志を共有する仲間と、<b>チャレンジできる環境</b>を創る。</p>
         </div>
       </a>
@@ -1221,7 +1355,7 @@
       <h2>模倣ではなく再構成</h2>
     </div>
     <div class="os-body reveal">
-      <p>栗原ゼミおよび栗原ゼミアルムナイの学びは、最初からMBA教育を移植しようとして設計したものではありません。AI共生社会において学生にどのような力が求められるのかを考え抜き、現実から問題を発見し、理論で分析し、複数の選択肢の中から自分の判断として決める力を育てる教育を追求してきました。その結果、主要なグローバルMBAが重視してきた教育思想やメソッドと、目指す到達点が重なっていることに気づきました。</p>
+      <p>栗原ゼミおよび栗原ゼミAlumniの学びは、最初からMBA教育を移植しようとして設計したものではありません。AI共生社会において学生にどのような力が求められるのかを考え抜き、現実から問題を発見し、理論で分析し、複数の選択肢の中から自分の判断として決める力を育てる教育を追求してきました。その結果、主要なグローバルMBAが重視してきた教育思想やメソッドと、目指す到達点が重なっていることに気づきました。</p>
       <p style="margin-top:1.4em">つまり、MBAは出発点ではなく、栗原ゼミの教育を構成するための重要な参照枠です。ケースメソッド、理論分析、課題設定、ディスカッション、プレゼンテーション、卒業後も続く学びの共同体。こうした要素を<b>パズルのピース</b>として受け取り、学部生の発達段階や日本の大学教育の文脈に合わせて組み替えることで、現在のメソッドを作っています。</p>
       <p style="margin-top:1.4em">これは、日本の教育が海外に劣っているという意味ではありません。研究者育成のための知識の継承をはじめ、日本の大学教育が世界に通用する部分は数多くあります。一方で、知識を実践的に現実へ適用し、不確実な状況に働きかけながら望ましい成果を実現していく<b>マネジメント能力の育成</b>については、米国や欧州のMBAに長い蓄積があります。だからこそ、その手法や方向性を素材として参照し、<b>模倣ではなく、学部ゼミの文脈に再構成</b>しています。</p>
     </div>
@@ -1314,10 +1448,10 @@
         <div class="shuhari-step is-next"><b>破</b><span>基礎を応用する「破」</span></div>
         <div class="shuhari-step"><b>離</b><span>自ら創る「離」</span></div>
       </div>
-      <p>3つの学びの段階のうち、卒業後は応用段階の「破」へ進みます。学びは2年間で終わりません。卒業後の学びの共同体──栗原ゼミアルムナイで、実践と対話を重ねながら学びを深めていきます。</p>
+      <p>3つの学びの段階のうち、卒業後は応用段階の「破」へ進みます。学びは2年間で終わりません。卒業後の学びの共同体──栗原ゼミAlumniで、実践と対話を重ねながら学びを深めていきます。</p>
       <div class="cta-row">
         <a class="btn btn-back" href="#position">← 前のページへ</a>
-        <a class="btn btn-solid" href="#alumni">アルムナイへ ↗</a>
+        <a class="btn btn-solid" href="#alumni">Alumniへ ↗</a>
       </div>
     </div>
   </div>
@@ -1327,7 +1461,7 @@
 <header class="hero" style="min-height:60svh">
   <canvas id="lorenz-alumni"></canvas>
   <div class="hero-inner wrap" style="padding:80px 0 60px">
-    <span class="eyebrow">Alumni Community &nbsp;|&nbsp; 栗原ゼミアルムナイ</span>
+    <span class="eyebrow">Alumni Community &nbsp;|&nbsp; 栗原ゼミAlumni</span>
     <h1 style="font-size:clamp(2.1rem,5.4vw,4rem)">個の力を磨く。<br><span class="glow">仲間を作る。</span></h1>
   </div>
 </header>
@@ -1345,7 +1479,7 @@
     <div class="os-body reveal">
       <p>現代社会は、AI技術の発展や価値観の多様化により、予測不能な変化の中にあります。これは悲観すべき状態ではなく、「予測して準備する」発想から、<b>「環境変化に柔軟に対応できる適応力を上げる」</b>発想へ切り替えることで対処できるものです。適応力を上げるとは、個人の力で立ち向かうのではなく、異なる個性や視点を持つ者同士が深く結びつき、チームとしての総合力で状況に向き合うアプローチです。</p>
       <p style="margin-top:1.4em">栗原ゼミは、授業としての関係を超え、学生が望めば生涯つながり続けられる学びの共同体を目指しています。2025年10月時点で、現役生と卒業生をあわせて<b>100名超</b>。近年は卒業生だけの勉強会にも毎回20名以上が参加し、世代を超えて価値観を共有する関係が育っています。</p>
-      <p style="margin-top:1.4em"><b>「アルムナイ（Alumni）」</b>は、ラテン語 alumnus（育てられた者・弟子）に由来し、欧米の大学では「卒業後も知を共有し合う学びの共同体」を指します。栗原ゼミでは性別で区分するOB・OGという呼称を用いず、すべての卒業生を包括する呼称として<b>「栗原ゼミアルムナイ」</b>としています。参加は任意です。望む人に、卒業後も学び続けられる場を用意しています。</p>
+      <p style="margin-top:1.4em"><b>「Alumni」</b>は、ラテン語 alumnus（育てられた者・弟子）に由来し、欧米の大学では「卒業後も知を共有し合う学びの共同体」を指します。栗原ゼミでは性別で区分するOB・OGという呼称を用いず、すべての卒業生を包括する呼称として<b>「栗原ゼミAlumni」</b>としています。参加は任意です。望む人に、卒業後も学び続けられる場を用意しています。</p>
     </div>
 
     <details class="ach det reveal">
@@ -1373,7 +1507,7 @@
         <span class="ach-ic" aria-hidden="true">+</span>
       </summary>
       <div class="ach-body">
-        <p>栗原は2026年に50歳を迎えます。コミュニティの持続可能性の観点から、<b>栗原個人に依存した属人的な運営からの脱却</b>が課題です。年齢的に、在学生の受け入れは25〜27期生程度までが現実的なライン。その後は、卒業生で構成される栗原ゼミアルムナイへと移行していきます。</p>
+        <p>栗原は2026年に50歳を迎えます。コミュニティの持続可能性の観点から、<b>栗原個人に依存した属人的な運営からの脱却</b>が課題です。年齢的に、在学生の受け入れは25〜27期生程度までが現実的なライン。その後は、卒業生で構成される栗原ゼミAlumniへと移行していきます。</p>
         <h5>第2フェーズへ</h5>
         <p>今後は、卒業生自身が主体的に運営する<b>自律的な体制</b>へ移行します。栗原が関与しなくても、卒業生同士が支え合い、学び合い、助け合える関係が自然に機能すること。それが目標です。まずは10期生を中心に、仕組みづくりを進めていきます。</p>
         <h5>世代の役割</h5>
@@ -1767,8 +1901,47 @@ document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
 })();
 
 
+/* ===== PROJECT DESCRIPTION POPUP ===== */
+(function(){
+  var info=document.getElementById('projectInfo');
+  var trigger=document.getElementById('projectTrigger');
+  var popup=document.getElementById('projectPopup');
+  if(!info||!trigger||!popup) return;
+  var closeButton=popup.querySelector('.project-popup-close');
+  function openProject(){
+    info.classList.add('open');
+    trigger.setAttribute('aria-expanded','true');
+    popup.setAttribute('aria-hidden','false');
+  }
+  function closeProject(){
+    info.classList.remove('open');
+    trigger.setAttribute('aria-expanded','false');
+    popup.setAttribute('aria-hidden','true');
+  }
+  var hoverable=window.matchMedia('(hover:hover) and (pointer:fine)').matches;
+  trigger.addEventListener('click',function(e){
+    e.stopPropagation();
+    if(hoverable) openProject();
+    else info.classList.contains('open')?closeProject():openProject();
+  });
+  if(closeButton) closeButton.addEventListener('click',function(e){e.stopPropagation();closeProject();});
+  if(hoverable){
+    info.addEventListener('mouseenter',openProject);
+    info.addEventListener('mouseleave',closeProject);
+  }
+  document.addEventListener('click',function(e){if(!info.contains(e.target)) closeProject();});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape') closeProject();});
+})();
+
+
 /* ===== INTRO SKIP (再訪・ページ遷移後はアニメスキップ) ===== */
 (function(){
+  var skipButton=document.getElementById('introSkip');
+  if(skipButton){
+    skipButton.addEventListener('click', function(){
+      document.documentElement.classList.add('skip-intro');
+    });
+  }
   // The initial state is set in <head>; all SPA navigation after that skips it.
   window.addEventListener('hashchange', function(){
     document.documentElement.classList.add('skip-intro');
@@ -1780,10 +1953,18 @@ document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
   var wrap = document.getElementById('eggnav');
   var core = document.getElementById('eggCore');
   if(!wrap || !core) return;
-  function open(){ wrap.classList.add('open'); core.setAttribute('aria-expanded','true'); }
-  function close(){ wrap.classList.remove('open'); core.setAttribute('aria-expanded','false'); }
+  var closeTimer=0;
+  function cancelClose(){ if(closeTimer){ clearTimeout(closeTimer); closeTimer=0; } }
+  function open(){ cancelClose();wrap.classList.add('open');core.setAttribute('aria-expanded','true'); }
+  function close(){ cancelClose();wrap.classList.remove('open');core.setAttribute('aria-expanded','false'); }
+  function scheduleClose(){ cancelClose();closeTimer=setTimeout(close,650); }
   function toggle(){ wrap.classList.contains('open') ? close() : open(); }
   core.addEventListener('click', function(e){ e.stopPropagation(); toggle(); });
+  // マウス操作では、カーソルを当てるだけで開き、外れると閉じる
+  if(window.matchMedia('(hover:hover) and (pointer:fine)').matches){
+    wrap.addEventListener('mouseenter', open);
+    wrap.addEventListener('mouseleave', scheduleClose);
+  }
   // 行き先クリック：羅針盤のtoggleを止め、閉じてから遷移
   wrap.querySelectorAll('.ray a').forEach(function(a){
     a.addEventListener('click', function(e){ e.stopPropagation(); setTimeout(close, 80); });
